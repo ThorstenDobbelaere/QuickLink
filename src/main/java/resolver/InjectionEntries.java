@@ -52,11 +52,11 @@ public class InjectionEntries {
                 .stream()
                 .map(ClassEntry::new)
                 .peek(ClassEntry::create)
-                .collect(Collectors.toUnmodifiableMap(ClassEntry::getClass, ClassEntry::getInstance));
+                .collect(Collectors.toUnmodifiableMap(ClassEntry::getType, ClassEntry::getInstance));
 
         List<Method> beanMethods = configs.stream()
                 .map((config) ->
-                        Arrays.stream(config.getMethods())
+                        Arrays.stream(config.getDeclaredMethods())
                                 .filter(method -> method.isAnnotationPresent(Bean.class))
                                 .map(AccessibilityHelper::trySetMethodAccessible)
                                 .toList())

@@ -1,12 +1,12 @@
-package com.example;
+package com.example1;
 
 import org.junit.jupiter.api.Test;
-import provider.DiProvider;
+import provider.QuickLink;
 
 public class TestProject {
 
     @Test
     public void test() {
-        DiProvider.run(TestProject.class);
+        QuickLink.run(TestProject.class);
     }
 }

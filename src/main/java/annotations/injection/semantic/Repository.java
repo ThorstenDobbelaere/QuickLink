@@ -10,6 +10,5 @@ import java.lang.annotation.Target;
 @Injectable
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Controller{
-    String value() default "";
+public @interface Repository {
 }

@@ -1,5 +1,6 @@
 package model;
 
+import annotations.injection.semantic.Controller;
 import exceptions.internal.CreateObjectInternalError;
 
 import java.lang.reflect.Constructor;
@@ -11,6 +12,7 @@ public class ClassEntry{
     private final Class<?>[] dependencies;
     private final Factory<?> supplier;
     private Object instance = null;
+    private String controllerPath;
 
     public Object getInstance(){
         return instance;
@@ -34,16 +36,29 @@ public class ClassEntry{
 
     }
 
+    public boolean isController(){
+        return controllerPath != null;
+    }
+
+    public String getControllerPath(){
+        return controllerPath;
+    }
+
     public ClassEntry(Constructor<?> constructor){
         this.type = constructor.getDeclaringClass();
         this.dependencies = constructor.getParameterTypes();
         this.supplier = constructor::newInstance;
+        if(this.type.isAnnotationPresent(Controller.class)){
+            Controller controller = this.type.getAnnotation(Controller.class);
+            controllerPath = controller.value();
+        }
     }
 
     public ClassEntry(Method method, Object instance){
         this.type = method.getReturnType();
         this.dependencies = method.getParameterTypes();
         this.supplier = (Object... args)-> method.invoke(instance, args);
+        this.controllerPath = null;
     }
 
     public Class<?> getType() {

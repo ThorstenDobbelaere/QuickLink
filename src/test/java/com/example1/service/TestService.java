@@ -1,4 +1,4 @@
-package com.example.service;
+package com.example1.service;
 
 import annotations.injection.Injectable;
 
