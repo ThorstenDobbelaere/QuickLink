@@ -3,6 +3,7 @@ package resolver;
 import annotations.injection.Injectable;
 import annotations.injection.config.Bean;
 import annotations.injection.config.Config;
+import exceptions.DuplicateException;
 import exceptions.internal.MapMethodObjectInternalError;
 import model.ClassEntry;
 import org.reflections.Reflections;
@@ -76,6 +77,17 @@ public class InjectionEntries {
         List<ClassEntry> entries = new ArrayList<>();
         entries.addAll(beanEntries);
         entries.addAll(injectableEntries);
+
+        List<ClassEntry> duplicates = entries.stream()
+                .filter(entry1->entries.stream()
+                        .filter(entry2-> entry1.getType().equals(entry2.getType())
+                                ).count()>1)
+                .distinct()
+                .toList();
+
+        if (!duplicates.isEmpty()) {
+            throw DuplicateException.duplicateComponent(duplicates.getFirst().getType());
+        }
 
         instance.entrySet = new LinkedHashSet<>(entries);
     }

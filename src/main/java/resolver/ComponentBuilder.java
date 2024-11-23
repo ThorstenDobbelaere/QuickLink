@@ -2,6 +2,7 @@ package resolver;
 
 import exceptions.internal.InternalException;
 import model.ClassEntry;
+import model.MappedController;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -9,10 +10,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ComponentBuilder {
-    private Map<String, Object> controllerMapping = null;
+    private Set<MappedController> controllerMapping = null;
     private static ComponentBuilder instance = new ComponentBuilder();
 
-    public Map<String, Object> getControllerMapping() {
+    public Set<MappedController> getControllerMapping() {
         return controllerMapping;
     }
 
@@ -34,9 +35,10 @@ public class ComponentBuilder {
                         classEntry -> resolve(classEntry.getType(), entryMap)
                 ));
 
-        Map<String, Object> controllerMapping = implementationMapping.entrySet().stream()
+        Set<MappedController> controllerMapping = implementationMapping.entrySet().stream()
                 .filter(entry->entry.getKey().isController())
-                .collect(Collectors.toUnmodifiableMap(e->e.getKey().getControllerPath(), Map.Entry::getValue));
+                .map(entry->new MappedController(entry.getKey().getControllerPath(), entry.getValue()))
+                .collect(Collectors.toUnmodifiableSet());
 
         instance = new ComponentBuilder();
         instance.controllerMapping = controllerMapping;
