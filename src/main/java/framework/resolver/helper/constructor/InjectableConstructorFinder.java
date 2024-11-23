@@ -1,6 +1,6 @@
 package framework.resolver.helper.constructor;
 
-import framework.exceptions.ConstructorScanException;
+import framework.exceptions.scanning.ConstructorScanException;
 import framework.resolver.helper.AccessibilityHelper;
 
 import java.lang.reflect.Constructor;

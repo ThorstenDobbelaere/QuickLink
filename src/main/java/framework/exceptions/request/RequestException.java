@@ -1,4 +1,4 @@
-package framework.exceptions;
+package framework.exceptions.request;
 
 public class RequestException extends RuntimeException {
     private RequestException(String message) {

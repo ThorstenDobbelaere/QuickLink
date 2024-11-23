@@ -1,7 +1,8 @@
 package framework.reflection;
 
 import framework.annotations.mapping.Mapping;
-import framework.exceptions.DuplicateException;
+import framework.context.QuickLinkContext;
+import framework.exceptions.scanning.DuplicateException;
 import framework.model.MappedController;
 import framework.model.MappedMethod;
 
@@ -10,17 +11,17 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 public class ControllerMethodMapper {
-    public static List<MappedMethod> map(Set<MappedController> controllers) {
+    public static List<MappedMethod> map(QuickLinkContext context, Set<MappedController> controllers) {
         return controllers.stream()
-                .map(ControllerMethodMapper::mapMethodsForController)
+                .map(mappedController -> mapMethodsForController(context, mappedController))
                 .reduce(new LinkedList<>(), (l1, l2)->{
                     l1.addAll(l2);
                     return l1;
                 });
     }
 
-    private static List<MappedMethod> mapMethodsForController(MappedController controller) {
-        var mappings = AnnotationReflectionHelper.getSubAnnotations(Mapping.class, false);
+    private static List<MappedMethod> mapMethodsForController(QuickLinkContext context, MappedController controller) {
+        var mappings = AnnotationReflectionHelper.getSubAnnotations(context, Mapping.class, false);
         var methods = controller.controller().getClass().getDeclaredMethods();
 
         Map<Method, Annotation> annotatedMethodsMap = new HashMap<>();

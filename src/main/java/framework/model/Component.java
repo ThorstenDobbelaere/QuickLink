@@ -7,7 +7,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class ClassEntry{
+public class Component {
     private final Class<?> type;
     private final Class<?>[] dependencies;
     private final Factory<?> supplier;
@@ -44,7 +44,7 @@ public class ClassEntry{
         return controllerPath;
     }
 
-    public ClassEntry(Constructor<?> constructor){
+    public Component(Constructor<?> constructor){
         this.type = constructor.getDeclaringClass();
         this.dependencies = constructor.getParameterTypes();
         this.supplier = constructor::newInstance;
@@ -54,7 +54,7 @@ public class ClassEntry{
         }
     }
 
-    public ClassEntry(Method method, Object instance){
+    public Component(Method method, Object instance){
         this.type = method.getReturnType();
         this.dependencies = method.getParameterTypes();
         this.supplier = (Object... args)-> method.invoke(instance, args);

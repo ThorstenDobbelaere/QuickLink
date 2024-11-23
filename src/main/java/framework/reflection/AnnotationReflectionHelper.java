@@ -1,5 +1,6 @@
 package framework.reflection;
 
+import framework.context.QuickLinkContext;
 import framework.exceptions.internal.InternalAnnotationException;
 import org.reflections.Reflections;
 
@@ -9,9 +10,9 @@ import java.util.stream.Collectors;
 
 public class AnnotationReflectionHelper {
 
-    public static Map<Class<?>, Class<? extends Annotation>> getTypesAnnotatedWithDirectSubtypes(Class<? extends Annotation> baseAnnotation) {
-        Reflections projectReflections = ReflectionInstances.getProjectReflections();
-        var subAnnotations = getSubAnnotations(baseAnnotation, true);
+    public static Map<Class<?>, Class<? extends Annotation>> getTypesAnnotatedWithDirectSubtypes(QuickLinkContext context, Class<? extends Annotation> baseAnnotation) {
+        Reflections projectReflections = context.getReflectionContext().getProjectReflections();
+        var subAnnotations = getSubAnnotations(context, baseAnnotation, true);
         return subAnnotations.stream()
                 .map(
                         a->projectReflections.getTypesAnnotatedWith(a)
@@ -24,8 +25,8 @@ public class AnnotationReflectionHelper {
                 });
     }
 
-    public static Set<Class<? extends Annotation>> getSubAnnotations(Class<? extends Annotation> baseAnnotation, boolean addBaseAnnotation) {
-        Reflections annotationReflections = ReflectionInstances.getAnnotationReflections();
+    public static Set<Class<? extends Annotation>> getSubAnnotations(QuickLinkContext context, Class<? extends Annotation> baseAnnotation, boolean addBaseAnnotation) {
+        Reflections annotationReflections = context.getReflectionContext().getAnnotationReflections();
 
         Set<Class<? extends Annotation>> subAnnotations = annotationReflections
                 .getTypesAnnotatedWith(baseAnnotation)

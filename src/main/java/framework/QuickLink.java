@@ -1,29 +1,39 @@
 package framework;
 
-import framework.requesthandlers.RequestHandler;
-import framework.resolver.MethodMappings;
-import org.reflections.Reflections;
-import framework.reflection.ReflectionInstances;
-import framework.resolver.ComponentBuilder;
-import framework.resolver.InjectionEntries;
+import framework.context.QuickLinkContext;
+import framework.resolver.CallResolver;
+import framework.resolver.RequestMapper;
+import framework.resolver.ObjectMapper;
+import framework.resolver.ComponentScanner;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 public class QuickLink {
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuickLink.class.getName());
+
+    private static void printTimeStamp(QuickLinkContext context, String description) {
+        LOGGER.info("Finished {} in {} ms\n\n", description, context.getChrono());
+    }
+
     public static void run(Class<?> root){
-        String packageName = root.getPackage().getName();
-        Reflections reflections = new Reflections(packageName);
-        ReflectionInstances.setProjectReflections(reflections);
+        QuickLinkContext context = new QuickLinkContext(root);
+        printTimeStamp(context, "context setup");
 
-        InjectionEntries.init();
-        ComponentBuilder.init();
+        ComponentScanner.fillComponentSet(context);
+        printTimeStamp(context, "component scanning");
 
-        var controllerMapping = ComponentBuilder.getInstance().getControllerMapping();
-        MethodMappings.init(controllerMapping);
+        ObjectMapper.init(context);
+        printTimeStamp(context, "object mapping");
 
-        var methodMappings = MethodMappings.getHandlers();
-        for(RequestHandler<?> handler : methodMappings){
-            System.out.println(handler.getMapping());
-            handler.handle("");
-        }
+        RequestMapper.init(context);
+        printTimeStamp(context, "request mapping");
+
+        CallResolver.setup(context);
+        // (Set up listener)
+    }
+
+    public static Object handleCall(String path){
+        return CallResolver.handleCall(path);
     }
 
     private QuickLink(){}

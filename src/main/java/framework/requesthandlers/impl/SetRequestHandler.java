@@ -1,6 +1,6 @@
 package framework.requesthandlers.impl;
 
-import framework.exceptions.RequestException;
+import framework.exceptions.request.RequestException;
 import framework.requesthandlers.RequestHandler;
 
 import java.util.function.Consumer;

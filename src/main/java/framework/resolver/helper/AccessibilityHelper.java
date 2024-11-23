@@ -1,6 +1,6 @@
 package framework.resolver.helper;
 
-import framework.exceptions.AccessException;
+import framework.exceptions.scanning.AccessException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

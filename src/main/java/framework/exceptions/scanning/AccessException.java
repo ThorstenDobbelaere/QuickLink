@@ -1,4 +1,4 @@
-package framework.exceptions;
+package framework.exceptions.scanning;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

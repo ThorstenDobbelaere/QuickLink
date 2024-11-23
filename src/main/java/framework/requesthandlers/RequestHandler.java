@@ -1,18 +1,22 @@
 package framework.requesthandlers;
 
-import framework.annotations.mapping.HtmlMapping;
-import framework.annotations.mapping.JsonMapping;
+import framework.annotations.mapping.StringifierMapping;
 import framework.annotations.mapping.SetMapping;
-import framework.exceptions.RequestException;
-import framework.exceptions.RequestMappingException;
+import framework.configurables.Stringifier;
+import framework.context.QuickLinkContext;
+import framework.exceptions.NoSuchComponentException;
+import framework.exceptions.request.RequestException;
+import framework.exceptions.request.RequestMappingException;
+import framework.model.Component;
 import framework.model.MappedMethod;
 import framework.requesthandlers.impl.HtmlRequestHandler;
-import framework.requesthandlers.impl.JsonRequestHandler;
 import framework.requesthandlers.impl.SetRequestHandler;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -24,34 +28,27 @@ public abstract class RequestHandler<ReturnType> {
         this.mapping = mapping;
     }
 
-    public static RequestHandler<?> createHandlerForMethod(MappedMethod method) {
+    public static RequestHandler<?> createHandlerForMethod(QuickLinkContext context, MappedMethod method) {
         Annotation annotation = method.annotation();
         String controllerMapping = method.controllerMapping();
         Method callback = method.method();
         Object controller = method.controller();
+        Set<Component> components = context.getCache().getComponents();
 
-        if (annotation instanceof HtmlMapping htmlMapping) {
-            if(!callback.getReturnType().equals(String.class)) throw new RequestMappingException("HtmlMapping must return String");
-            String methodMapping = htmlMapping.value();
+        if (annotation instanceof StringifierMapping stringifierMapping) {
+            if(!callback.getReturnType().equals(String.class)) throw new RequestMappingException("StringifierMapping must return String");
+            Class<? extends Stringifier> stringifierClass = stringifierMapping.stringifier();
+            Optional<Component> stringifierComponentOptional = components.stream().filter(c -> c.getType().equals(stringifierClass)).findFirst();
+            if(stringifierComponentOptional.isEmpty()) throw new NoSuchComponentException(stringifierClass);
+            Stringifier stringifier = (Stringifier) stringifierComponentOptional.get().getInstance();
+            String methodMapping = stringifierMapping.value();
 
-            Supplier<String> supplier = ()-> {
+            Supplier<Object> supplier = ()-> {
                 try {return callback.invoke(controller).toString();}
                 catch (IllegalAccessException | InvocationTargetException e) { throw RequestException.invokeException(e); }
             };
 
-            return new HtmlRequestHandler(controllerMapping + methodMapping, supplier);
-        }
-
-        if (annotation instanceof JsonMapping jsonMapping) {
-            if(callback.getReturnType().equals(Void.TYPE)) throw new RequestMappingException("JsonMapping must return Object");
-            String methodMapping = jsonMapping.value();
-
-            Supplier<Object> supplier = ()-> {
-                try {return callback.invoke(controller);}
-                catch (IllegalAccessException | InvocationTargetException e) { throw RequestException.invokeException(e); }
-            };
-
-            return new JsonRequestHandler(controllerMapping + methodMapping, supplier);
+            return new HtmlRequestHandler(controllerMapping + methodMapping, supplier, stringifier);
         }
 
         if (annotation instanceof SetMapping setMapping) {

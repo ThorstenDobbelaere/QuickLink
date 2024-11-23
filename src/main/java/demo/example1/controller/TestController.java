@@ -3,7 +3,7 @@ package demo.example1.controller;
 import demo.example1.service.CapsService;
 import demo.example1.service.TestService;
 import framework.annotations.injection.semantic.Controller;
-import framework.annotations.mapping.HtmlMapping;
+import framework.annotations.mapping.StringifierMapping;
 
 @Controller("/api/test")
 public class TestController {
@@ -15,15 +15,20 @@ public class TestController {
         this.capsService = capsService;
     }
 
-    @HtmlMapping("/concat")
+    @StringifierMapping("/concat")
     public String test() {
-        System.out.println("Running Concat");
+        //System.out.println("Running Concat");
         return testService.concatData();
     }
 
-    @HtmlMapping("/caps")
+    @StringifierMapping("/caps")
     public String caps() {
         System.out.println("Running Caps");
         return capsService.capitalizeData();
+    }
+
+    @StringifierMapping("/count")
+    public String count() {
+        return Integer.toString(testService.count());
     }
 }

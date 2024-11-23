@@ -17,4 +17,8 @@ public class TestService {
         List<String> data = testRepository.getData();
         return String.join(", ", data);
     }
+
+    public int count(){
+        return testRepository.incrementCounter();
+    }
 }

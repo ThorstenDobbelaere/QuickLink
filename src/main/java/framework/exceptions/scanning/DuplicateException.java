@@ -1,4 +1,4 @@
-package framework.exceptions;
+package framework.exceptions.scanning;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

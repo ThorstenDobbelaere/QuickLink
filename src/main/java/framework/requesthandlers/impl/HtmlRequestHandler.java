@@ -1,23 +1,27 @@
 package framework.requesthandlers.impl;
 
-import framework.exceptions.RequestException;
+import framework.configurables.Stringifier;
+import framework.exceptions.request.RequestException;
 import framework.requesthandlers.RequestHandler;
 
 import java.util.function.Supplier;
 
 public class HtmlRequestHandler extends RequestHandler<String> {
-    private final Supplier<String> htmlSupplier;
+    private final Supplier<Object> objectSupplier;
+    private final Stringifier stringifier;
 
     @Override
     public String handle(String input) throws RequestException {
         if(input != null && !input.isEmpty()){
             throw RequestException.noStringExpected(this.getMapping(), input);
         }
-        return htmlSupplier.get();
+        Object object = objectSupplier.get();
+        return stringifier.stringify(object);
     }
 
-    public HtmlRequestHandler(String mapping, Supplier<String> supplier) {
+    public HtmlRequestHandler(String mapping, Supplier<Object> supplier, Stringifier stringifier) {
         super(mapping);
-        this.htmlSupplier = supplier;
+        this.objectSupplier = supplier;
+        this.stringifier = stringifier;
     }
 }
