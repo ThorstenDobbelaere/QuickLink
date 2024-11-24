@@ -7,9 +7,9 @@ import framework.configurables.impl.DefaultConfigurationMappings;
 import framework.context.QuickLinkContext;
 import framework.exceptions.scanning.DuplicateException;
 import framework.exceptions.internal.MapMethodObjectInternalError;
-import framework.model.Component;
+import framework.resolver.model.Component;
 import org.reflections.Reflections;
-import framework.reflection.AnnotationReflectionHelper;
+import framework.resolver.reflection.AnnotationReflectionHelper;
 import framework.resolver.helper.AccessibilityHelper;
 import framework.resolver.helper.constructor.ConfigConstructorHelper;
 import framework.resolver.helper.constructor.InjectableConstructorFinder;
@@ -97,9 +97,10 @@ public class ComponentScanner {
         Set<Component> componentSet = new LinkedHashSet<>(components);
         context.getCache().setComponents(componentSet);
 
-        LOGGER.info("Component scanning complete. Entries are: \n{}\n", componentSet.stream()
-                .map(component -> String.format("| - %-100s |", component.getType())).
-                collect(Collectors.joining("\n")));
+        String message = context.getLogFormatter().highlight("Component scanning complete. Entries are: \n{}");
+        LOGGER.debug(message, componentSet.stream()
+                .map(component -> String.format("| - %-100s |", component.getType()))
+                .collect(Collectors.joining("\n")));
     }
 
 

@@ -1,4 +1,4 @@
-package framework.model;
+package framework.resolver.model;
 
 import framework.annotations.injection.semantic.Controller;
 import framework.exceptions.internal.CreateObjectInternalError;

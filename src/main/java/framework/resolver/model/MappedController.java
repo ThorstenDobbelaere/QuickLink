@@ -1,4 +1,4 @@
-package framework.model;
+package framework.resolver.model;
 
 public record MappedController(String mapping, Object controller) {
 }

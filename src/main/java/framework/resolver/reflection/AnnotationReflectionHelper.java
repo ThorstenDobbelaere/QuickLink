@@ -1,4 +1,4 @@
-package framework.reflection;
+package framework.resolver.reflection;
 
 import framework.context.QuickLinkContext;
 import framework.exceptions.internal.InternalAnnotationException;

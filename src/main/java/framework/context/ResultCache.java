@@ -1,8 +1,8 @@
 package framework.context;
 
-import framework.model.Component;
-import framework.model.MappedController;
-import framework.model.MappedMethod;
+import framework.resolver.model.Component;
+import framework.resolver.model.MappedController;
+import framework.resolver.model.MappedMethod;
 import framework.requesthandlers.RequestHandler;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public class ResultCache {
 
     private Set<MappedController> mappedControllers;
     private Set<MappedMethod> mappedMethods;
-    private List<RequestHandler<?>> requestHandlerList;
+    private List<RequestHandler> requestHandlerList;
 
     ResultCache(){}
 
@@ -33,19 +33,15 @@ public class ResultCache {
         this.mappedControllers = mappedControllers;
     }
 
-    public Set<MappedMethod> getMappedMethods() {
-        return mappedMethods;
-    }
-
     public void setMappedMethods(Set<MappedMethod> mappedMethods) {
         this.mappedMethods = mappedMethods;
     }
 
-    public List<RequestHandler<?>> getRequestHandlerList() {
+    public List<RequestHandler> getRequestHandlerList() {
         return requestHandlerList;
     }
 
-    public void setRequestHandlerList(List<RequestHandler<?>> requestHandlerList) {
+    public void setRequestHandlerList(List<RequestHandler> requestHandlerList) {
         this.requestHandlerList = requestHandlerList;
     }
 }

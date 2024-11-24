@@ -1,4 +1,4 @@
-package framework.model;
+package framework.resolver.model;
 
 import java.lang.reflect.InvocationTargetException;
 

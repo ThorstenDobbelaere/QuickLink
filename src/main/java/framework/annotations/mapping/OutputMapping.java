@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Mapping
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface StringifierMapping {
+public @interface OutputMapping {
     String value() default "";
     Class<? extends Stringifier> stringifier() default Stringifier.class;
 }

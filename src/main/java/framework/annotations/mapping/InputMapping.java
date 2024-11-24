@@ -8,6 +8,6 @@ import java.lang.annotation.Target;
 @Mapping
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface SetMapping {
+public @interface InputMapping {
     String value() default "";
 }

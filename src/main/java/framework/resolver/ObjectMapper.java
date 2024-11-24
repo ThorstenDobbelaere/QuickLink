@@ -2,8 +2,8 @@ package framework.resolver;
 
 import framework.context.QuickLinkContext;
 import framework.exceptions.internal.InternalException;
-import framework.model.Component;
-import framework.model.MappedController;
+import framework.resolver.model.Component;
+import framework.resolver.model.MappedController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class ObjectMapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObjectMapper.class);
 
-    public static void init(QuickLinkContext context) {
+    public static void mapObjectsAndControllers(QuickLinkContext context) {
         var cache = context.getCache();
         Set<Component> components = cache.getComponents();
 
@@ -28,7 +28,8 @@ public class ObjectMapper {
                         component -> resolve(component.getType(), typeToEntryMap)
                 ));
 
-        LOGGER.info("Completed class to object mapping. Mappings are: \n{}\n\n", entryToObjectMap.entrySet().stream()
+        String objectMessage = context.getLogFormatter().highlight("Completed class to object mapping. Mappings are: \n{}");
+        LOGGER.debug(objectMessage, entryToObjectMap.entrySet().stream()
                 .map(entry->String.format("| - %-60s ->    %-80s |", entry.getKey().getType(), entry.getValue()))
                 .collect(Collectors.joining("\n")));
 
@@ -37,7 +38,8 @@ public class ObjectMapper {
                 .map(entry->new MappedController(entry.getKey().getControllerPath(), entry.getValue()))
                 .collect(Collectors.toUnmodifiableSet());
 
-        LOGGER.info("Completed controller mapping. Available controllers are: \n{}\n\n", mappedControllerSet.stream()
+        String controllerMessage = context.getLogFormatter().highlight("Completed controller mapping. Available controllers are: \n{}");
+        LOGGER.debug(controllerMessage, mappedControllerSet.stream()
                 .map(mappedController -> String.format("| - %-60s ->    %-80s | ", mappedController.mapping(), mappedController.controller()))
                 .collect(Collectors.joining("\n")));
 

@@ -1,10 +1,10 @@
-package framework.reflection;
+package framework.resolver.reflection;
 
 import framework.annotations.mapping.Mapping;
 import framework.context.QuickLinkContext;
 import framework.exceptions.scanning.DuplicateException;
-import framework.model.MappedController;
-import framework.model.MappedMethod;
+import framework.resolver.model.MappedController;
+import framework.resolver.model.MappedMethod;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

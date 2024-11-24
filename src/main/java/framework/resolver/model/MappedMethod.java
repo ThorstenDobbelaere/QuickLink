@@ -1,4 +1,4 @@
-package framework.model;
+package framework.resolver.model;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

@@ -1,58 +1,63 @@
 package framework.requesthandlers;
 
-import framework.annotations.mapping.StringifierMapping;
-import framework.annotations.mapping.SetMapping;
+import framework.annotations.mapping.OutputMapping;
+import framework.annotations.mapping.InputMapping;
 import framework.configurables.Stringifier;
 import framework.context.QuickLinkContext;
-import framework.exceptions.NoSuchComponentException;
 import framework.exceptions.request.RequestException;
 import framework.exceptions.request.RequestMappingException;
-import framework.model.Component;
-import framework.model.MappedMethod;
-import framework.requesthandlers.impl.HtmlRequestHandler;
+import framework.http.internal.HttpResponse;
+import framework.http.responseentity.ResponseEntity;
+import framework.requesthandlers.impl.CustomOutputRequestHandler;
+import framework.resolver.model.MappedMethod;
+import framework.requesthandlers.impl.OutputRequestHandler;
 import framework.requesthandlers.impl.SetRequestHandler;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public abstract class RequestHandler<ReturnType> {
+public abstract class RequestHandler{
     private final String mapping;
-    public abstract ReturnType handle(String input) throws RequestException;
+    public abstract HttpResponse handle(String input) throws RequestException;
 
     protected RequestHandler(String mapping) {
         this.mapping = mapping;
     }
 
-    public static RequestHandler<?> createHandlerForMethod(QuickLinkContext context, MappedMethod method) {
+    public static RequestHandler createHandlerForMethod(QuickLinkContext context, MappedMethod method) {
         Annotation annotation = method.annotation();
         String controllerMapping = method.controllerMapping();
         Method callback = method.method();
         Object controller = method.controller();
-        Set<Component> components = context.getCache().getComponents();
 
-        if (annotation instanceof StringifierMapping stringifierMapping) {
-            if(!callback.getReturnType().equals(String.class)) throw new RequestMappingException("StringifierMapping must return String");
-            Class<? extends Stringifier> stringifierClass = stringifierMapping.stringifier();
-            Optional<Component> stringifierComponentOptional = components.stream().filter(c -> c.getType().equals(stringifierClass)).findFirst();
-            if(stringifierComponentOptional.isEmpty()) throw new NoSuchComponentException(stringifierClass);
-            Stringifier stringifier = (Stringifier) stringifierComponentOptional.get().getInstance();
-            String methodMapping = stringifierMapping.value();
+        if (annotation instanceof OutputMapping outputMapping) {
+            Class<?> returnType = callback.getReturnType();
+            String methodMapping = outputMapping.value();
+            String mapping = controllerMapping + methodMapping;
 
-            Supplier<Object> supplier = ()-> {
-                try {return callback.invoke(controller).toString();}
+            if(returnType.equals(ResponseEntity.class)) {
+                Supplier<ResponseEntity> responseEntitySupplier = ()->{
+                    try{return (ResponseEntity) callback.invoke(controller);}
+                    catch(IllegalAccessException | InvocationTargetException e) { throw RequestException.invokeException(e); }
+                };
+                return new CustomOutputRequestHandler(mapping, responseEntitySupplier);
+            }
+            Supplier<Object> resultSupplier = ()-> {
+                try {return callback.invoke(controller);}
                 catch (IllegalAccessException | InvocationTargetException e) { throw RequestException.invokeException(e); }
             };
 
-            return new HtmlRequestHandler(controllerMapping + methodMapping, supplier, stringifier);
+            Class<? extends Stringifier> stringifierClass = outputMapping.stringifier();
+            Stringifier stringifier = context.getInstanceOfType(stringifierClass);
+
+            return new OutputRequestHandler(controllerMapping + methodMapping, resultSupplier, stringifier);
         }
 
-        if (annotation instanceof SetMapping setMapping) {
-            String methodMapping = setMapping.value();
+        if (annotation instanceof InputMapping inputMapping) {
+            String methodMapping = inputMapping.value();
             Consumer<String> consumer = (input)-> {
                 try {callback.invoke(controller, input);}
                 catch (IllegalAccessException | InvocationTargetException e) { throw RequestException.invokeException(e); }
