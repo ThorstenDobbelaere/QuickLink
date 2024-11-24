@@ -2,7 +2,7 @@ package framework.resolver;
 
 import framework.context.QuickLinkContext;
 import framework.resolver.model.MappedController;
-import framework.resolver.model.MappedMethod;
+import framework.resolver.model.MappedControllerMethod;
 import framework.resolver.reflection.ControllerMethodMapper;
 import framework.requesthandlers.RequestHandler;
 import org.slf4j.Logger;
@@ -17,14 +17,13 @@ public class RequestMapper {
     public static void mapRequests(QuickLinkContext context) {
         var cache = context.getCache();
         Set<MappedController> controllers = cache.getMappedControllers();
-        List<MappedMethod> methods = ControllerMethodMapper.map(context, controllers);
-        cache.setMappedMethods(new HashSet<>(methods));
+        List<MappedControllerMethod> methods = ControllerMethodMapper.map(context, controllers);
 
         List<RequestHandler> requestHandlerList = methods.stream()
-                .map(mappedMethod -> RequestHandler.createHandlerForMethod(context, mappedMethod))
+                .map(mappedControllerMethod -> RequestHandler.createHandlerForMethod(context, mappedControllerMethod))
                 .toList();
 
-        String message = context.getLogFormatter().highlight("Request mapping complete. Available mappings are:\n{}");
+        String message = context.getLogFormatter().highlight("Request mapping complete. Available urls are:\n{}");
         LOGGER.debug(message, requestHandlerList.
                 stream()
                 .map(requestHandler -> String.format("| - %-60s  |", requestHandler.getMapping()))

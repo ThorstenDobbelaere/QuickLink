@@ -1,4 +1,4 @@
-package demo.example1;
+package demo;
 
 import framework.QuickLink;
 import framework.context.configurable.HttpConfiguration;

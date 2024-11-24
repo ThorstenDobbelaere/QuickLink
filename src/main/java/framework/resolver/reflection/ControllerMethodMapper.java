@@ -4,14 +4,14 @@ import framework.annotations.mapping.Mapping;
 import framework.context.QuickLinkContext;
 import framework.exceptions.scanning.DuplicateException;
 import framework.resolver.model.MappedController;
-import framework.resolver.model.MappedMethod;
+import framework.resolver.model.MappedControllerMethod;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
 
 public class ControllerMethodMapper {
-    public static List<MappedMethod> map(QuickLinkContext context, Set<MappedController> controllers) {
+    public static List<MappedControllerMethod> map(QuickLinkContext context, Set<MappedController> controllers) {
         return controllers.stream()
                 .map(mappedController -> mapMethodsForController(context, mappedController))
                 .reduce(new LinkedList<>(), (l1, l2)->{
@@ -20,7 +20,7 @@ public class ControllerMethodMapper {
                 });
     }
 
-    private static List<MappedMethod> mapMethodsForController(QuickLinkContext context, MappedController controller) {
+    private static List<MappedControllerMethod> mapMethodsForController(QuickLinkContext context, MappedController controller) {
         var mappings = AnnotationReflectionHelper.getSubAnnotations(context, Mapping.class, false);
         var methods = controller.controller().getClass().getDeclaredMethods();
 
@@ -37,7 +37,7 @@ public class ControllerMethodMapper {
         }
 
         return annotatedMethodsMap.entrySet().stream()
-                .map(entry-> new MappedMethod(controller.controller(), entry.getKey(), entry.getValue(), controller.mapping()))
+                .map(entry-> new MappedControllerMethod(controller.controller(), entry.getKey(), entry.getValue(), controller.mapping()))
                 .toList();
     }
 }

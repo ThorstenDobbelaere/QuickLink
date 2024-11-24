@@ -21,7 +21,8 @@ public class Component {
     public void create(Object... args) {
         if(args.length != dependencies.length) throw CreateObjectInternalError.wrongArgCount(type);
         for(int i = 0; i < dependencies.length; i++){
-            if(!(dependencies[i].isInstance(args[i]))) throw CreateObjectInternalError.wrongArgTypes(type);
+            if(!(dependencies[i].isInstance(args[i])))
+                throw CreateObjectInternalError.wrongArgTypes(type, args[i].getClass(), dependencies[i], i);
         }
 
         try{

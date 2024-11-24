@@ -32,7 +32,7 @@ public class QuickLink {
     private static void setup(QuickLinkContext context) {
         printTimeStamp(context, "context setup");
 
-        ComponentScanner.fillComponentSet(context);
+        ComponentScanner.scanComponentsAndInterceptables(context);
         printTimeStamp(context, "component scanning");
 
         ObjectMapper.mapObjectsAndControllers(context);
@@ -42,7 +42,6 @@ public class QuickLink {
         printTimeStamp(context, "request mapping");
 
         CallResolver.setup(context);
-        // (Set up listener)
 
         SimpleHttpListener listener = new SimpleHttpListener(context);
         printTimeStamp(context, "http listener");

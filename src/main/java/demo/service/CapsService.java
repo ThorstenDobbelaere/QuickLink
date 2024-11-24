@@ -1,7 +1,8 @@
-package demo.example1.service;
+package demo.service;
 
-import demo.example1.repository.TestRepository;
+import demo.repository.TestRepository;
 import framework.annotations.injection.semantic.Service;
+import framework.annotations.interception.Timed;
 
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ public class CapsService {
         this.testRepository = testRepository;
     }
 
+    @Timed
     public String capitalizeData() {
         return testRepository.getData().stream().map(String::toUpperCase).collect(Collectors.joining(", "));
     }

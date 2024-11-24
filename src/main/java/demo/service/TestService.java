@@ -1,6 +1,6 @@
-package demo.example1.service;
+package demo.service;
 
-import demo.example1.repository.TestRepository;
+import demo.repository.TestRepository;
 import framework.annotations.Injectable;
 
 import java.util.List;

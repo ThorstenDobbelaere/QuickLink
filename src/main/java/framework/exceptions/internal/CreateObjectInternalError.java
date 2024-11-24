@@ -11,8 +11,9 @@ public class CreateObjectInternalError extends RuntimeException {
         return new CreateObjectInternalError(String.format("Could not create instance for %s: Wrong number of arguments.", type.getName()));
     }
 
-    public static CreateObjectInternalError wrongArgTypes(Class<?> type) {
-        return new CreateObjectInternalError(String.format("Could not create instance for %s: Incompatible argument types.", type.getName()));
+    public static CreateObjectInternalError wrongArgTypes(Class<?> targetType, Class<?> expected, Class<?> real, int index) {
+        return new CreateObjectInternalError(String.format("Could not create instance for %s: Incompatible argument types. Expected %s at index %d but got %s.",
+                targetType.getName(), expected.getName(), index, real.getName()));
     }
 
     public static CreateObjectInternalError noAccess(Class<?> type) {

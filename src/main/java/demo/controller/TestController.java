@@ -1,7 +1,7 @@
-package demo.example1.controller;
+package demo.controller;
 
-import demo.example1.service.CapsService;
-import demo.example1.service.TestService;
+import demo.service.CapsService;
+import demo.service.TestService;
 import framework.annotations.injection.semantic.Controller;
 import framework.annotations.mapping.OutputMapping;
 

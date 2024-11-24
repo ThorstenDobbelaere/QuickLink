@@ -28,7 +28,7 @@ public class ObjectMapper {
                         component -> resolve(component.getType(), typeToEntryMap)
                 ));
 
-        String objectMessage = context.getLogFormatter().highlight("Completed class to object mapping. Mappings are: \n{}");
+        String objectMessage = context.getLogFormatter().highlight("Class -> object mapping complete. Mappings are: \n{}");
         LOGGER.debug(objectMessage, entryToObjectMap.entrySet().stream()
                 .map(entry->String.format("| - %-60s ->    %-80s |", entry.getKey().getType(), entry.getValue()))
                 .collect(Collectors.joining("\n")));
@@ -38,7 +38,7 @@ public class ObjectMapper {
                 .map(entry->new MappedController(entry.getKey().getControllerPath(), entry.getValue()))
                 .collect(Collectors.toUnmodifiableSet());
 
-        String controllerMessage = context.getLogFormatter().highlight("Completed controller mapping. Available controllers are: \n{}");
+        String controllerMessage = context.getLogFormatter().highlight("Url -> Controller mapping complete. Mappings are: \n{}");
         LOGGER.debug(controllerMessage, mappedControllerSet.stream()
                 .map(mappedController -> String.format("| - %-60s ->    %-80s | ", mappedController.mapping(), mappedController.controller()))
                 .collect(Collectors.joining("\n")));

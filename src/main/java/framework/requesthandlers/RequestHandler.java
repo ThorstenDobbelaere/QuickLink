@@ -9,7 +9,7 @@ import framework.exceptions.request.RequestMappingException;
 import framework.http.internal.HttpResponse;
 import framework.http.responseentity.ResponseEntity;
 import framework.requesthandlers.impl.CustomOutputRequestHandler;
-import framework.resolver.model.MappedMethod;
+import framework.resolver.model.MappedControllerMethod;
 import framework.requesthandlers.impl.OutputRequestHandler;
 import framework.requesthandlers.impl.SetRequestHandler;
 
@@ -27,7 +27,7 @@ public abstract class RequestHandler{
         this.mapping = mapping;
     }
 
-    public static RequestHandler createHandlerForMethod(QuickLinkContext context, MappedMethod method) {
+    public static RequestHandler createHandlerForMethod(QuickLinkContext context, MappedControllerMethod method) {
         Annotation annotation = method.annotation();
         String controllerMapping = method.controllerMapping();
         Method callback = method.method();

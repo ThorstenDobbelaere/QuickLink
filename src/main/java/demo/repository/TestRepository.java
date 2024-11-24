@@ -1,4 +1,4 @@
-package demo.example1.repository;
+package demo.repository;
 
 import framework.annotations.injection.semantic.Repository;
 
