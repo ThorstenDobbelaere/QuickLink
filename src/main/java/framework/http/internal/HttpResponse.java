@@ -1,5 +1,6 @@
 package framework.http.internal;
 
+import framework.configurables.Stringifier;
 import framework.http.responseentity.ContentType;
 import framework.http.responseentity.HttpStatus;
 import framework.http.responseentity.ResponseEntity;
@@ -9,10 +10,10 @@ public class HttpResponse {
     private final ContentType contentType;
     private final String body;
 
-    public HttpResponse(ResponseEntity entity) {
+    public HttpResponse(ResponseEntity entity, Stringifier stringifier) {
         this.status = entity.status();
-        this.contentType = entity.contentType();
-        this.body = entity.stringifier().stringify(entity.data());
+        this.contentType = stringifier.getContentType();
+        this.body = stringifier.stringify(entity.data());
     }
 
     public HttpResponse(HttpStatus status) {

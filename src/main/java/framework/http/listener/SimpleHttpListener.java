@@ -1,8 +1,12 @@
 package framework.http.listener;
 
+import framework.configurables.impl.StringifierDefaultImpl;
 import framework.context.QuickLinkContext;
 import framework.context.configurable.HttpConfiguration;
+import framework.exceptions.HttpException;
 import framework.http.internal.HttpResponse;
+import framework.http.responseentity.HttpStatus;
+import framework.http.responseentity.ResponseEntity;
 import framework.resolver.CallResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
 public class SimpleHttpListener {
@@ -55,18 +60,37 @@ public class SimpleHttpListener {
 
     private void processHttp(String httpRequest, Socket socket) throws IOException {
         LOGGER.trace("HTTP request: {}", httpRequest);
-        String firstLine = httpRequest.split("\n")[0];
-        String url = firstLine.split(" ")[1];
-        processUrl(url, socket);
+        try{
+            String firstLine = httpRequest.split("\n")[0];
+            String url = firstLine.split(" ")[1];
+            processUrl(url, socket);
+        } catch (Exception e){
+            LOGGER.error("Error processing HTTP request {}", httpRequest, e);
+        }
+
     }
 
     private void processUrl(String url, Socket socket) throws IOException {
         LOGGER.debug("Received call to {}", url);
         if(url.equals(config.getShutdownUrl())){
+            LOGGER.info("Stopping...");
             listening = false;
+            HttpResponse ok = new HttpResponse(HttpStatus.OK);
+            sendResponse(ok, socket);
+            return;
         }
-        HttpResponse response = CallResolver.handleCall(url);
-        sendResponse(response, socket);
+        String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
+
+        try {
+            HttpResponse response = CallResolver.handleCall(decodedUrl);
+            sendResponse(response, socket);
+        } catch (HttpException e) {
+            LOGGER.error("HTTP Error occurred: {}. Returning status code {}", e.getMessage(), e.getStatus());
+            ResponseEntity entity = new ResponseEntity(String.format("An error occurred while handling your request:\n%s", e.getMessage()), e.getStatus());
+            HttpResponse response = new HttpResponse(entity, new StringifierDefaultImpl());
+            sendResponse(response, socket);
+        }
+
     }
 
     private void sendResponse(HttpResponse response, Socket socket) throws IOException {

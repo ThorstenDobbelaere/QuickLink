@@ -72,8 +72,8 @@ public class ObjectsAndControllersMappingTest {
         //      String -> Bartje                        (directly from PrimitiveConfig:             Bean creation)
         //      Integer -> 22                           (from AgeRepository dependency:             Component -> Bean injection)
         //      Person -> Age = 22, Name = Bartje       (from previous beans:                       Bean -> Bean injection + hierarchical injection + multiple injection types in Bean)
-        //      PetNameRepository -> name = Max         (from default constructor)
-        //      PetNameService -> name = Max            (from PetNameRepository)                    Component -> Component
+        //      PetNameRepository -> referenceName = Max         (from default constructor)
+        //      PetNameService -> referenceName = Max            (from PetNameRepository)                    Component -> Component
         //      Pet -> Person = Bartje, Name = Max      (from Bean + PetNameService)                Component -> Component, Bean -> Component, multiple injection types in Component)
     }
 
