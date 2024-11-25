@@ -17,6 +17,9 @@ public class HttpConfiguration {
     }
 
     public void setShutdownUrl(String shutdownUrl) {
-        this.shutdownUrl = shutdownUrl;
+        if(!shutdownUrl.startsWith("/"))
+            this.shutdownUrl = "/" + shutdownUrl;
+        else
+            this.shutdownUrl = shutdownUrl;
     }
 }
