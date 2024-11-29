@@ -2,11 +2,12 @@ package framework;
 
 import framework.context.QuickLinkContext;
 import framework.context.configurable.QuickLinkContextConfiguration;
-import framework.http.listener.SimpleHttpListener;
-import framework.resolver.CallResolver;
-import framework.resolver.RequestMapper;
-import framework.resolver.ObjectMapper;
-import framework.resolver.ComponentScanner;
+import framework.request.listener.InputListener;
+import framework.request.listener.InputListenerFactory;
+import framework.setup.CallResolver;
+import framework.setup.RequestMapper;
+import framework.setup.ObjectMapper;
+import framework.setup.ComponentScanner;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -43,8 +44,8 @@ public class QuickLink {
 
         CallResolver.setup(context);
 
-        SimpleHttpListener listener = new SimpleHttpListener(context);
-        printTimeStamp(context, "http listener");
+        InputListener listener = InputListenerFactory.getInputListener(context);
+        printTimeStamp(context, "listener setup");
         try{
             listener.start();
         } catch (IOException e) {

@@ -3,7 +3,7 @@ package demo.config.types;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import framework.configurables.Stringifier;
-import framework.http.responseentity.ContentType;
+import framework.request.response.ContentType;
 
 public class JsonStringifier implements Stringifier {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();

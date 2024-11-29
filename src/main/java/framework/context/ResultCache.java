@@ -1,8 +1,8 @@
 package framework.context;
 
-import framework.resolver.model.Component;
-import framework.resolver.model.MappedController;
-import framework.requesthandlers.RequestHandler;
+import framework.setup.model.Component;
+import framework.setup.model.MappedController;
+import framework.request.handlers.RequestHandler;
 
 import java.lang.reflect.Method;
 import java.util.List;

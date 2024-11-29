@@ -1,7 +1,7 @@
 import framework.context.QuickLinkContext;
-import framework.resolver.ObjectMapper;
-import framework.resolver.model.Component;
-import framework.resolver.model.MappedController;
+import framework.setup.ObjectMapper;
+import framework.setup.model.Component;
+import framework.setup.model.MappedController;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import testproject.DummyProjectMain;

@@ -1,6 +1,6 @@
 package framework.exceptions;
 
-import framework.http.responseentity.HttpStatus;
+import framework.request.response.HttpStatus;
 
 public class HttpException extends RuntimeException {
     private final HttpStatus status;

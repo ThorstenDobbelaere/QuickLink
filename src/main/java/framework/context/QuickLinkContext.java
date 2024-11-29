@@ -1,11 +1,11 @@
 package framework.context;
 
-import framework.context.configurable.HttpConfiguration;
+import framework.context.configurable.ListenerConfiguration;
 import framework.context.configurable.LogFormatter;
 import framework.context.configurable.QuickLinkContextConfiguration;
 import framework.exceptions.NoSuchComponentException;
 import framework.exceptions.internal.ComponentCastError;
-import framework.resolver.model.Component;
+import framework.setup.model.Component;
 import org.reflections.Reflections;
 
 import java.time.Instant;
@@ -17,7 +17,8 @@ public class QuickLinkContext {
     private final ReflectionContext reflectionContext;
     private Instant lastTime;
     private LogFormatter logFormatter = new LogFormatter();
-    private HttpConfiguration httpConfiguration = new HttpConfiguration();
+    private ListenerConfiguration listenerConfiguration = new ListenerConfiguration();
+    private RunMode runMode;
 
     public QuickLinkContext(Class<?> root) {
         String packageName = root.getPackage().getName();
@@ -26,6 +27,7 @@ public class QuickLinkContext {
         reflectionContext = new ReflectionContext();
         Reflections reflections = new Reflections(packageName);
         reflectionContext.setProjectReflections(reflections);
+        runMode = RunMode.HTTP;
     }
 
     public QuickLinkContext(Class<?> root, QuickLinkContextConfiguration config) {
@@ -35,17 +37,23 @@ public class QuickLinkContext {
         if(logFormatter != null)
             this.logFormatter = logFormatter;
 
-        HttpConfiguration httpConfiguration = config.getHttpConfiguration();
-        if(httpConfiguration != null)
-            this.httpConfiguration = httpConfiguration;
+        ListenerConfiguration listenerConfiguration = config.getListenerConfiguration();
+        if(listenerConfiguration != null)
+            this.listenerConfiguration = listenerConfiguration;
+
+        this.runMode = config.getRunMode();
+    }
+
+    public RunMode getRunMode() {
+        return runMode;
     }
 
     public LogFormatter getLogFormatter() {
         return logFormatter;
     }
 
-    public HttpConfiguration getHttpConfiguration() {
-        return httpConfiguration;
+    public ListenerConfiguration getListenerConfiguration() {
+        return listenerConfiguration;
     }
 
     public long getChrono() {

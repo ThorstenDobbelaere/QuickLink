@@ -5,8 +5,8 @@ import demo.model.Vendor;
 import demo.service.VendorService;
 import framework.annotations.injection.semantic.Controller;
 import framework.annotations.mapping.OutputMapping;
-import framework.http.responseentity.HttpStatus;
-import framework.http.responseentity.ResponseEntity;
+import framework.request.response.HttpStatus;
+import framework.request.response.ResponseEntity;
 
 @Controller("/vendor")
 public class VendorController {
@@ -17,8 +17,8 @@ public class VendorController {
     }
 
     @OutputMapping(value = "/get", stringifier = JsonStringifier.class)
-    public ResponseEntity getVendor() {
-        Vendor vendor = vendorService.findVendorByName("jane");
+    public ResponseEntity getVendor(String name) {
+        Vendor vendor = vendorService.findVendorByName(name);
         return new ResponseEntity(vendor, HttpStatus.OK);
     }
 }

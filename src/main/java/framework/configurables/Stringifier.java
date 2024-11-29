@@ -1,6 +1,6 @@
 package framework.configurables;
 
-import framework.http.responseentity.ContentType;
+import framework.request.response.ContentType;
 
 public interface Stringifier {
     String stringify(Object o);

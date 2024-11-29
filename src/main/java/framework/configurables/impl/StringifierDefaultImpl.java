@@ -1,7 +1,7 @@
 package framework.configurables.impl;
 
 import framework.configurables.Stringifier;
-import framework.http.responseentity.ContentType;
+import framework.request.response.ContentType;
 
 public class StringifierDefaultImpl implements Stringifier {
     @Override

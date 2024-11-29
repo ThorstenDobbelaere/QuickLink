@@ -1,8 +1,19 @@
 package framework.context.configurable;
 
+import framework.context.RunMode;
+
 public class QuickLinkContextConfiguration {
     private LogFormatter logFormatter = null;
-    private HttpConfiguration httpConfiguration = null;
+    private ListenerConfiguration listenerConfiguration = null;
+    private RunMode runMode = RunMode.HTTP;
+
+    public RunMode getRunMode() {
+        return runMode;
+    }
+
+    public void setRunMode(RunMode runMode) {
+        this.runMode = runMode;
+    }
 
     public LogFormatter getLogFormatter() {
         return logFormatter;
@@ -12,11 +23,11 @@ public class QuickLinkContextConfiguration {
         this.logFormatter = logFormatter;
     }
 
-    public HttpConfiguration getHttpConfiguration() {
-        return httpConfiguration;
+    public ListenerConfiguration getListenerConfiguration() {
+        return listenerConfiguration;
     }
 
-    public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
-        this.httpConfiguration = httpConfiguration;
+    public void setHttpConfiguration(ListenerConfiguration listenerConfiguration) {
+        this.listenerConfiguration = listenerConfiguration;
     }
 }
