@@ -1,4 +1,4 @@
-package framework.setup;
+package framework.setup.helper;
 
 import framework.annotations.interception.Timed;
 import framework.exceptions.internal.InternalException;
@@ -10,23 +10,26 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.Instant;
 import java.util.Arrays;
 
-public class TimedInterceptor {
-    public static <T> T instantiateAnnotationInterceptedComponent(Class<?> type, Constructor<T> constructor, Object[] args) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+public class InterceptionHelper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InterceptionHelper.class);
+
+    public static Object instantiateAnnotationInterceptedComponent(Class<?> type, Constructor<?> constructor, Object[] args) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         ProxyFactory proxyFactory = new ProxyFactory();
         proxyFactory.setSuperclass(type);
         proxyFactory.setFilter(method -> Arrays.stream(method.getDeclaredAnnotations())
                 .anyMatch(annotation -> annotation.annotationType().equals(Timed.class))
         );
 
-        T instance = constructor.newInstance(args);
+        Object instance = constructor.newInstance(args);
         MethodHandler handler = new AnnotatedHandler(instance);
 
         try{
             Object timedInstance = proxyFactory.create(constructor.getParameterTypes(), args, handler);
-            System.out.println("Creating proxy for " + type.getName());
-            return (T)timedInstance;
+            LOGGER.debug("Creating proxy for {}", type.getName());
+            return timedInstance;
         } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             throw new InternalException(e.getMessage());
         }
@@ -40,8 +43,12 @@ public class TimedInterceptor {
             if (!method.isAnnotationPresent(Timed.class)) {
                 return method.invoke(original);
             }
-            TIMED_LOGGER.info("Timed Method {} invoked", method.getName());
-            return method.invoke(original, objects);
+
+            Instant start = Instant.now();
+            Object result = method.invoke(original, objects);
+            Instant end = Instant.now();
+            TIMED_LOGGER.info("Timed method {} took {} ms", method.getName(), end.toEpochMilli() - start.toEpochMilli());
+            return result;
         }
     }
 }

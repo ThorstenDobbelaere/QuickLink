@@ -1,11 +1,14 @@
 package framework.setup.model;
 
 import framework.annotations.injection.semantic.Controller;
+import framework.annotations.interception.Timed;
 import framework.exceptions.internal.CreateObjectInternalError;
+import framework.setup.helper.InterceptionHelper;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class Component {
     private final Class<?> type;
@@ -16,10 +19,6 @@ public class Component {
 
     public Object getInstance(){
         return instance;
-    }
-
-    public void setInstance(Object instance){
-        this.instance = instance;
     }
 
     public void create(Object... args) {
@@ -64,11 +63,11 @@ public class Component {
     }
 
     public static Component forConstructor(Constructor<?> constructor){
-        //Class<?> type = constructor.getDeclaringClass();
-        //if(Arrays.stream(type.getMethods()).anyMatch(method -> method.isAnnotationPresent(Timed.class))){
-        //    Factory<?> factory = (args)-> TimedInterceptor.instantiateAnnotationInterceptedComponent(type, constructor, args);
-        //    return new Component(factory, constructor.getParameterTypes(), type);
-        //}
+        Class<?> type = constructor.getDeclaringClass();
+        if(Arrays.stream(type.getMethods()).anyMatch(method -> method.isAnnotationPresent(Timed.class))){
+            Factory<?> factory = (args) -> InterceptionHelper.instantiateAnnotationInterceptedComponent(type, constructor, args);
+            return new Component(factory, constructor.getParameterTypes(), type);
+        }
         return new Component(constructor);
     }
 
