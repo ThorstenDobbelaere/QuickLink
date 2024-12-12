@@ -32,7 +32,7 @@ public class SimpleHttpListener implements InputListener{
         logFormatter = context.getLogFormatter();
     }
 
-    public void start() throws IOException {
+    public void startListening() throws IOException {
         try(ServerSocket serverSocket = new ServerSocket(config.getPort())){
             this.listening = true;
             while(this.listening){

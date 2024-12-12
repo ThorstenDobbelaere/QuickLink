@@ -47,7 +47,7 @@ public class QuickLink {
         InputListener listener = InputListenerFactory.getInputListener(context);
         printTimeStamp(context, "listener setup");
         try{
-            listener.start();
+            listener.startListening();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

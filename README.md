@@ -15,7 +15,9 @@ Om de demo als HTTP API uit te voeren, kan je volgend commando uitvoeren:
 ./gradlew run --args="--port=4040 --shutdown=/stop"
 ```
 
-Om de demo als console app uit te voeren, verander je de arguments en enable je console:
+Je kan [demo.http](./src/main/java/demo/demo.http) gebruiken om een idee te krijgen van de structuur van de requests.
+
+Om de demo als console app uit te voeren, kan je deze arguments gebruiken:
 ```shell
 ./gradlew run --console=plain --args="--console --shutdown=/stop"
 ```
@@ -31,7 +33,7 @@ Je kan tests uitvoeren met:
 ./gradlew test
 ```
 
-## Installatie en setup
+## Setup
 Je initialiseert Quicklink in te main methode:
 ```java
 public class DemoProject {
@@ -253,12 +255,11 @@ Als default wordt OK terug gegeven als de methode zonder errors werd afgerond.
 
 ### Timed
 Alle methoden van geïnjecteerde klassen kan je als @Timed annoteren. Deze loggen dan hoelang ze bezig waren wanneer
-ze klaar zijn.
+ze klaar zijn, in milliseconden.
 
 ```java
     @Timed
     public Warehouse getWarehouse(String vendorName, String resourceName) {
         // logica die getimed wordt
     }
-
 ```

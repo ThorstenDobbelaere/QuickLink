@@ -27,7 +27,7 @@ public class ConsoleListener implements InputListener{
     }
 
     @Override
-    public void start() {
+    public void startListening() {
         listening = true;
         while (listening) {
             LOGGER.info("Enter your request: ");

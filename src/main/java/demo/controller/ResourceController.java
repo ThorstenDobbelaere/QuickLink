@@ -21,7 +21,7 @@ public class ResourceController {
     }
 
     @IOMapping("/create-resource")
-    public Resource createResource(String name, String referenceName, double description){
-        return resourceService.createResource(name, referenceName, description);
+    public Resource createResource(String name, String referenceName, double price){
+        return resourceService.createResource(name, referenceName, price);
     }
 }
