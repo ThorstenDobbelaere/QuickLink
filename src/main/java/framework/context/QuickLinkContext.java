@@ -1,8 +1,8 @@
 package framework.context;
 
-import framework.context.configurable.ListenerConfiguration;
-import framework.context.configurable.LogFormatter;
-import framework.context.configurable.QuickLinkContextConfiguration;
+import framework.context.config.ListenerConfiguration;
+import framework.context.config.LogFormatter;
+import framework.context.config.QuickLinkContextConfiguration;
 import framework.exceptions.NoSuchComponentException;
 import framework.exceptions.internal.ComponentCastError;
 import framework.setup.model.Component;

@@ -1,4 +1,4 @@
-package framework.context.configurable;
+package framework.context.config;
 
 import framework.context.RunMode;
 

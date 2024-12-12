@@ -18,6 +18,10 @@ public class Component {
         return instance;
     }
 
+    public void setInstance(Object instance){
+        this.instance = instance;
+    }
+
     public void create(Object... args) {
         if(args.length != dependencies.length) throw CreateObjectInternalError.wrongArgCount(type);
         for(int i = 0; i < dependencies.length; i++){
@@ -45,14 +49,27 @@ public class Component {
         return controllerPath;
     }
 
-    public Component(Constructor<?> constructor){
-        this.type = constructor.getDeclaringClass();
-        this.dependencies = constructor.getParameterTypes();
-        this.supplier = constructor::newInstance;
+    private Component(Constructor<?> constructor){
+        this(constructor::newInstance, constructor.getParameterTypes(), constructor.getDeclaringClass());
+    }
+
+    private Component(Factory<?> supplier, Class<?>[] parameterTypes, Class<?> type){
+        this.type = type;
+        this.dependencies = parameterTypes;
+        this.supplier = supplier;
         if(this.type.isAnnotationPresent(Controller.class)){
-            Controller controller = this.type.getAnnotation(Controller.class);
-            controllerPath = controller.value();
+            Controller controllerAnnotation = this.type.getAnnotation(Controller.class);
+            controllerPath = controllerAnnotation.value();
         }
+    }
+
+    public static Component forConstructor(Constructor<?> constructor){
+        //Class<?> type = constructor.getDeclaringClass();
+        //if(Arrays.stream(type.getMethods()).anyMatch(method -> method.isAnnotationPresent(Timed.class))){
+        //    Factory<?> factory = (args)-> TimedInterceptor.instantiateAnnotationInterceptedComponent(type, constructor, args);
+        //    return new Component(factory, constructor.getParameterTypes(), type);
+        //}
+        return new Component(constructor);
     }
 
     public Component(Method method, Object instance){

@@ -19,6 +19,17 @@ Om de demo als console app uit te voeren, verander je de arguments en enable je 
 ```shell
 ./gradlew run --console=plain --args="--console --shutdown=/stop"
 ```
+### Build
+Je kan de demo app builden met:
+```shell
+./gradlew build
+```
+
+### Tests
+Je kan tests uitvoeren met:
+```shell
+./gradlew test
+```
 
 ## Installatie en setup
 Je initialiseert Quicklink in te main methode:

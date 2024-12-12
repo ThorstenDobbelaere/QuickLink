@@ -2,8 +2,8 @@ package demo;
 
 import framework.QuickLink;
 import framework.context.RunMode;
-import framework.context.configurable.ListenerConfiguration;
-import framework.context.configurable.QuickLinkContextConfiguration;
+import framework.context.config.ListenerConfiguration;
+import framework.context.config.QuickLinkContextConfiguration;
 
 import java.util.logging.Logger;
 

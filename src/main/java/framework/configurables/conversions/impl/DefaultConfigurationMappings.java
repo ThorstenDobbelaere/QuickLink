@@ -1,6 +1,6 @@
-package framework.configurables.impl;
+package framework.configurables.conversions.impl;
 
-import framework.configurables.OutputConverter;
+import framework.configurables.conversions.OutputConverter;
 
 public class DefaultConfigurationMappings {
     public OutputConverter outputConverter(){

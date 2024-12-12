@@ -24,10 +24,10 @@ public class ObjectsAndControllersMappingTest {
         QuickLinkContext context = new QuickLinkContext(DummyProjectMain.class);
 
         Set<Component> components = new HashSet<>();
-        components.add(new Component(AgeRepository.class.getConstructor()));
-        components.add(new Component(PetNameRepository.class.getConstructor()));
-        components.add(new Component(PetNameService.class.getConstructor(PetNameRepository.class)));
-        components.add(new Component(DummyController.class.getConstructor(PetNameService.class, Person.class)));
+        components.add(Component.forConstructor(AgeRepository.class.getConstructor()));
+        components.add(Component.forConstructor(PetNameRepository.class.getConstructor()));
+        components.add(Component.forConstructor(PetNameService.class.getConstructor(PetNameRepository.class)));
+        components.add(Component.forConstructor(DummyController.class.getConstructor(PetNameService.class, Person.class)));
 
         PersonConfig personConfig = new PersonConfig();
         components.add(new Component(PersonConfig.class.getMethod("createPerson", String.class, Integer.class), personConfig));

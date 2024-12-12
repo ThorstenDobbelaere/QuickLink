@@ -1,4 +1,4 @@
-package framework.context.configurable;
+package framework.context.config;
 
 public class LogFormatter {
     public LogFormatter() {}

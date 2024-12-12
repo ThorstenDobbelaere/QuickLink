@@ -1,6 +1,6 @@
 package framework.request.handlers.impl;
 
-import framework.configurables.OutputConverter;
+import framework.configurables.conversions.OutputConverter;
 import framework.exceptions.HttpException;
 import framework.exceptions.request.RequestException;
 import framework.exceptions.request.RequestParameterScanningException;
@@ -30,12 +30,8 @@ public class IORequestHandler extends RequestHandler {
         try{
             Object[] parsedInputs = InputScanners.parseInput(input, expectedClasses);
             LOGGER.debug("Parsed inputs: {}", Arrays.stream(parsedInputs).toList());
-            Object[] adaptedInputs = new Object[expectedClasses.size()];
 
-            for (int i = 0; i < expectedClasses.size(); i++) {
-                adaptedInputs[i] = expectedClasses.get(i).cast(parsedInputs[i]);
-            }
-            Object result = callback.apply(adaptedInputs);
+            Object result = callback.apply(parsedInputs);
             ResponseEntity entity = new ResponseEntity(result, HttpStatus.OK);
             return new HttpResponse(entity, outputConverter);
         } catch (RequestParameterScanningException e){

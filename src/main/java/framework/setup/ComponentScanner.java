@@ -4,7 +4,7 @@ import framework.annotations.Injectable;
 import framework.annotations.injection.config.Bean;
 import framework.annotations.injection.config.Config;
 import framework.annotations.interception.Timed;
-import framework.configurables.impl.DefaultConfigurationMappings;
+import framework.configurables.conversions.impl.DefaultConfigurationMappings;
 import framework.context.QuickLinkContext;
 import framework.exceptions.scanning.DuplicateException;
 import framework.exceptions.internal.MapMethodObjectInternalError;
@@ -97,7 +97,7 @@ public class ComponentScanner {
         return classesToMap.stream()
                 .map(ConfigConstructorHelper::tryFindDefaultConstructor)
                 .map(AccessibilityHelper::trySetConstructorAccessible)
-                .map(Component::new)
+                .map(Component::forConstructor)
                 .peek(Component::create)
                 .collect(Collectors.toUnmodifiableMap(Component::getType, Component::getInstance));
     }
@@ -107,7 +107,7 @@ public class ComponentScanner {
                 .stream()
                 .map(InjectableConstructorFinder::tryGetConstructor)
                 .map(AccessibilityHelper::trySetConstructorAccessible)
-                .map(Component::new)
+                .map(Component::forConstructor)
                 .toList();
     }
 

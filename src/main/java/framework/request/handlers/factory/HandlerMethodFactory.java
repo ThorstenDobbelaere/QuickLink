@@ -12,7 +12,7 @@ public class HandlerMethodFactory {
         return (args) -> {
             Object result;
             try{
-                result = methodInfo.callback().invoke(args);
+                result = methodInfo.callback().invoke(methodInfo.controller(), args);
             } catch (InvocationTargetException | IllegalAccessException e) {
                 throw RequestException.requestInvoked(e);
             }

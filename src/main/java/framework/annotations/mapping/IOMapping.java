@@ -1,6 +1,6 @@
 package framework.annotations.mapping;
 
-import framework.configurables.OutputConverter;
+import framework.configurables.conversions.OutputConverter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

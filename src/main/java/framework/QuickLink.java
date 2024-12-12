@@ -1,7 +1,7 @@
 package framework;
 
 import framework.context.QuickLinkContext;
-import framework.context.configurable.QuickLinkContextConfiguration;
+import framework.context.config.QuickLinkContextConfiguration;
 import framework.request.listener.InputListener;
 import framework.request.listener.InputListenerFactory;
 import framework.setup.*;

@@ -3,7 +3,7 @@ package framework.request.handlers.factory;
 import framework.annotations.mapping.IOMapping;
 import framework.annotations.mapping.InputMapping;
 import framework.annotations.mapping.OutputMapping;
-import framework.configurables.OutputConverter;
+import framework.configurables.conversions.OutputConverter;
 import framework.context.QuickLinkContext;
 import framework.exceptions.request.RequestMappingException;
 import framework.request.handlers.RequestHandler;
@@ -74,8 +74,8 @@ public class HandlerFactory {
         OutputConverter outputConverter = methodInfo.context().getInstanceOfType(outputConverterClass);
 
         if(returnType.equals(ResponseEntity.class)) {
-            Function<Object[] ,ResponseEntity> responseEntitySupplier = HandlerMethodFactory.createHandlerMethodReflect(methodInfo, ResponseEntity.class);
-            return new CustomIORequestHandler(url, outputConverter, responseEntitySupplier, requiredTypes, paramNames);
+            Function<Object[] ,ResponseEntity> handler = HandlerMethodFactory.createHandlerMethodReflect(methodInfo, ResponseEntity.class);
+            return new CustomIORequestHandler(url, outputConverter, handler, requiredTypes, paramNames);
         }
 
         Function<Object[], Object> handler = HandlerMethodFactory.createHandlerMethodReflect(methodInfo, Object.class);

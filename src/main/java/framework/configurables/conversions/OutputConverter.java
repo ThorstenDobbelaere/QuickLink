@@ -1,4 +1,4 @@
-package framework.configurables;
+package framework.configurables.conversions;
 
 import framework.request.response.ContentType;
 

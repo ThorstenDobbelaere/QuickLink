@@ -2,7 +2,7 @@ package demo.config.types;
 
 import demo.model.Resource;
 import framework.annotations.Injectable;
-import framework.configurables.OutputConverter;
+import framework.configurables.conversions.OutputConverter;
 import framework.request.response.ContentType;
 
 @Injectable

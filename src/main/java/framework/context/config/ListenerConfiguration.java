@@ -1,4 +1,4 @@
-package framework.context.configurable;
+package framework.context.config;
 
 public class ListenerConfiguration {
     private int port;

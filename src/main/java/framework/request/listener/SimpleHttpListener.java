@@ -1,9 +1,9 @@
 package framework.request.listener;
 
-import framework.configurables.impl.OutputConverterDefaultImpl;
+import framework.configurables.conversions.impl.OutputConverterDefaultImpl;
 import framework.context.QuickLinkContext;
-import framework.context.configurable.ListenerConfiguration;
-import framework.context.configurable.LogFormatter;
+import framework.context.config.ListenerConfiguration;
+import framework.context.config.LogFormatter;
 import framework.exceptions.HttpException;
 import framework.request.response.HttpResponse;
 import framework.request.response.HttpStatus;

@@ -55,14 +55,23 @@ public class ObjectMapper {
         if(component.isCached())
             return component.getInstance();
 
+        instantiateComponent(component, typeToComponentMap);
+        return component.getInstance();
+    }
+
+    private static void instantiateComponent(Component component, Map<Class<?>, Component> typeToComponentMap) {
         Class<?>[] dependencies = component.getDependencies();
+        Class<?> type = component.getType();
+
         Object[] dependencyObjects = Arrays.stream(dependencies)
                 .map(
-                    t->resolve(t, typeToComponentMap)
+                        t->resolve(t, typeToComponentMap)
                 ).toList().toArray();
-        component.create(dependencyObjects);
+        instantiateComponent(component, dependencyObjects);
         LOGGER.trace("Resolved {}", String.format("%-45s to %-45s", component, type));
+    }
 
-        return component.getInstance();
+    private static void instantiateComponent(Component component, Object[] dependencies){
+        component.create(dependencies);
     }
 }

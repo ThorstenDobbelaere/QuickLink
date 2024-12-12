@@ -1,6 +1,6 @@
 package framework.request.response;
 
-import framework.configurables.OutputConverter;
+import framework.configurables.conversions.OutputConverter;
 
 public class HttpResponse {
     private final HttpStatus status;

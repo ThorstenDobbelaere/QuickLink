@@ -1,8 +1,8 @@
 package framework.request.listener;
 
-import framework.configurables.impl.OutputConverterDefaultImpl;
+import framework.configurables.conversions.impl.OutputConverterDefaultImpl;
 import framework.context.QuickLinkContext;
-import framework.context.configurable.ListenerConfiguration;
+import framework.context.config.ListenerConfiguration;
 import framework.exceptions.HttpException;
 import framework.request.response.HttpResponse;
 import framework.request.response.HttpStatus;
@@ -11,7 +11,6 @@ import framework.setup.CallResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;

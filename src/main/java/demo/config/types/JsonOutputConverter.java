@@ -2,7 +2,7 @@ package demo.config.types;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import framework.configurables.OutputConverter;
+import framework.configurables.conversions.OutputConverter;
 import framework.request.response.ContentType;
 
 public class JsonOutputConverter implements OutputConverter {
