@@ -27,7 +27,7 @@ public class QuickLinkContextConfiguration {
         return listenerConfiguration;
     }
 
-    public void setHttpConfiguration(ListenerConfiguration listenerConfiguration) {
+    public void setListenerConfiguration(ListenerConfiguration listenerConfiguration) {
         this.listenerConfiguration = listenerConfiguration;
     }
 }

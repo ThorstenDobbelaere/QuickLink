@@ -5,11 +5,7 @@ public class RequestException extends RuntimeException {
         super(message);
     }
 
-    public static RequestException noStringExpected(String mapping, String input) {
-      return new RequestException(String.format("No input expected at mapping '%s', got parameter '%s'", mapping, input));
-    }
-
-    public static RequestException invokeException(Exception e) {
+    public static RequestException requestInvoked(Throwable e) {
       return new RequestException(String.format("Invoke exception: %s", e.getMessage()));
     }
 }

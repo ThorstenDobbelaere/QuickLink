@@ -1,9 +1,9 @@
 package framework.configurables.impl;
 
-import framework.configurables.Stringifier;
+import framework.configurables.OutputConverter;
 
 public class DefaultConfigurationMappings {
-    public Stringifier stringifier(){
-        return new StringifierDefaultImpl();
+    public OutputConverter outputConverter(){
+        return new OutputConverterDefaultImpl();
     }
 }

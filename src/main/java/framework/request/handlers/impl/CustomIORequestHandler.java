@@ -1,6 +1,6 @@
 package framework.request.handlers.impl;
 
-import framework.configurables.Stringifier;
+import framework.configurables.OutputConverter;
 import framework.exceptions.HttpException;
 import framework.exceptions.request.RequestException;
 import framework.exceptions.request.RequestParameterScanningException;
@@ -18,7 +18,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class CustomIORequestHandler extends RequestHandler {
-    private final Stringifier stringifier;
+    private final OutputConverter outputConverter;
     private final Function<Object[], ResponseEntity> callback;
     private final List<Class<?>> expectedClasses;
     private final List<String> paramNames;
@@ -31,15 +31,15 @@ public class CustomIORequestHandler extends RequestHandler {
             Object[] parsedInputs = InputScanners.parseInput(input, expectedClasses);
             LOGGER.debug("Parsed inputs: {}", Arrays.stream(parsedInputs).toList());
             ResponseEntity entity = callback.apply(parsedInputs);
-            return new HttpResponse(entity, stringifier);
+            return new HttpResponse(entity, outputConverter);
         } catch (RequestParameterScanningException e){
             throw new HttpException(e, HttpStatus.BAD_REQUEST);
         }
     }
 
-    public CustomIORequestHandler(String mapping, Stringifier stringifier, Function<Object[], ResponseEntity> callback, List<Class<?>> expectedClasses, List<String> paramNames) {
+    public CustomIORequestHandler(String mapping, OutputConverter outputConverter, Function<Object[], ResponseEntity> callback, List<Class<?>> expectedClasses, List<String> paramNames) {
         super(mapping);
-        this.stringifier = stringifier;
+        this.outputConverter = outputConverter;
         this.callback = callback;
         this.expectedClasses = expectedClasses;
         this.paramNames = paramNames;

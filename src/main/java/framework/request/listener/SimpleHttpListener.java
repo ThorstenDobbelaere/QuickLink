@@ -1,6 +1,6 @@
 package framework.request.listener;
 
-import framework.configurables.impl.StringifierDefaultImpl;
+import framework.configurables.impl.OutputConverterDefaultImpl;
 import framework.context.QuickLinkContext;
 import framework.context.configurable.ListenerConfiguration;
 import framework.context.configurable.LogFormatter;
@@ -90,7 +90,7 @@ public class SimpleHttpListener implements InputListener{
         } catch (HttpException e) {
             LOGGER.error("HTTP Error occurred: {}. Returning status code {}", e.getMessage(), e.getStatus());
             ResponseEntity entity = new ResponseEntity(String.format("An error occurred while handling your request:\n%s", e.getMessage()), e.getStatus());
-            HttpResponse response = new HttpResponse(entity, new StringifierDefaultImpl());
+            HttpResponse response = new HttpResponse(entity, new OutputConverterDefaultImpl());
             sendResponse(response, socket);
         }
 

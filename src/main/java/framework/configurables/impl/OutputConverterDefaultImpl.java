@@ -1,9 +1,9 @@
 package framework.configurables.impl;
 
-import framework.configurables.Stringifier;
+import framework.configurables.OutputConverter;
 import framework.request.response.ContentType;
 
-public class StringifierDefaultImpl implements Stringifier {
+public class OutputConverterDefaultImpl implements OutputConverter {
     @Override
     public String stringify(Object o) {
         return o.toString();

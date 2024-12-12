@@ -19,13 +19,13 @@ public class ObjectMapper {
         var cache = context.getCache();
         Set<Component> components = cache.getComponents();
 
-        Map<Class<?>, Component> typeToEntryMap = components.stream()
+        Map<Class<?>, Component> typeToComponentMap = components.stream()
                 .collect(Collectors.toUnmodifiableMap(Component::getType, entry -> entry));
 
         Map<Component, Object> entryToObjectMap = components.stream()
                 .collect(Collectors.toUnmodifiableMap(
                         component -> component,
-                        component -> resolve(component.getType(), typeToEntryMap)
+                        component -> resolve(component.getType(), typeToComponentMap)
                 ));
 
         String objectMessage = context.getLogFormatter().highlight("Class -> object mapping complete. Mappings are: \n{}");

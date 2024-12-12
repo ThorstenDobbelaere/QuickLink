@@ -1,6 +1,6 @@
 package framework.annotations.mapping;
 
-import framework.configurables.Stringifier;
+import framework.configurables.OutputConverter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,5 +12,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface IOMapping {
     String value() default "";
-    Class<? extends Stringifier> stringifier() default Stringifier.class;
+    Class<? extends OutputConverter> outputConverter() default OutputConverter.class;
 }

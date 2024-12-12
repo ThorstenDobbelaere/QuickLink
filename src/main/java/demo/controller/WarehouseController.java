@@ -1,7 +1,7 @@
 package demo.controller;
 
-import demo.config.types.JsonStringifier;
-import demo.config.types.ResourceToHtmlStringifier;
+import demo.config.types.JsonOutputConverter;
+import demo.config.types.ResourceToHtmlOutputConverter;
 import demo.model.Warehouse;
 import demo.service.WarehouseService;
 import framework.annotations.injection.semantic.Controller;
@@ -19,16 +19,14 @@ public class WarehouseController {
     }
 
 
-    @IOMapping(value = "/find", stringifier = JsonStringifier.class)
+    @IOMapping(value = "/find", outputConverter = JsonOutputConverter.class)
     public Warehouse findWarehouse(String vendorName, String resourceName){
         return warehouseService.getWarehouse(vendorName, resourceName);
     }
 
-    @IOMapping(value = "/log", stringifier = ResourceToHtmlStringifier.class)
+    @IOMapping(value = "/log", outputConverter = ResourceToHtmlOutputConverter.class)
     public String log(String message){
         LOGGER.info("{}", message);
         return String.format("Logged '%s'", message);
     }
-
-
 }

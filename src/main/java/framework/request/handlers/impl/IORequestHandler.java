@@ -1,6 +1,6 @@
 package framework.request.handlers.impl;
 
-import framework.configurables.Stringifier;
+import framework.configurables.OutputConverter;
 import framework.exceptions.HttpException;
 import framework.exceptions.request.RequestException;
 import framework.exceptions.request.RequestParameterScanningException;
@@ -18,7 +18,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class IORequestHandler extends RequestHandler {
-    private final Stringifier stringifier;
+    private final OutputConverter outputConverter;
     private final Function<Object[], Object> callback;
     private final List<String> paramNames;
     private final List<Class<?>> expectedClasses;
@@ -30,17 +30,22 @@ public class IORequestHandler extends RequestHandler {
         try{
             Object[] parsedInputs = InputScanners.parseInput(input, expectedClasses);
             LOGGER.debug("Parsed inputs: {}", Arrays.stream(parsedInputs).toList());
-            Object result = callback.apply(parsedInputs);
+            Object[] adaptedInputs = new Object[expectedClasses.size()];
+
+            for (int i = 0; i < expectedClasses.size(); i++) {
+                adaptedInputs[i] = expectedClasses.get(i).cast(parsedInputs[i]);
+            }
+            Object result = callback.apply(adaptedInputs);
             ResponseEntity entity = new ResponseEntity(result, HttpStatus.OK);
-            return new HttpResponse(entity, stringifier);
+            return new HttpResponse(entity, outputConverter);
         } catch (RequestParameterScanningException e){
             throw new HttpException(e, HttpStatus.BAD_REQUEST);
         }
     }
 
-    public IORequestHandler(String mapping, Stringifier stringifier, Function<Object[], Object> callback, List<Class<?>> expectedClasses, List<String> paramNames) {
+    public IORequestHandler(String mapping, OutputConverter outputConverter, Function<Object[], Object> callback, List<Class<?>> expectedClasses, List<String> paramNames) {
         super(mapping);
-        this.stringifier = stringifier;
+        this.outputConverter = outputConverter;
         this.callback = callback;
         this.paramNames = paramNames;
         this.expectedClasses = expectedClasses;

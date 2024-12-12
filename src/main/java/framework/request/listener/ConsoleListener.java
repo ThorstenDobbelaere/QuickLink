@@ -1,6 +1,6 @@
 package framework.request.listener;
 
-import framework.configurables.impl.StringifierDefaultImpl;
+import framework.configurables.impl.OutputConverterDefaultImpl;
 import framework.context.QuickLinkContext;
 import framework.context.configurable.ListenerConfiguration;
 import framework.exceptions.HttpException;
@@ -28,7 +28,7 @@ public class ConsoleListener implements InputListener{
     }
 
     @Override
-    public void start() throws IOException {
+    public void start() {
         listening = true;
         while (listening) {
             LOGGER.info("Enter your request: ");
@@ -38,7 +38,7 @@ public class ConsoleListener implements InputListener{
     }
 
 
-    private void processUrl(String url) throws IOException {
+    private void processUrl(String url) {
         LOGGER.debug("Received call to {}", url);
         if(url.equals(config.getShutdownUrl())){
             LOGGER.info("Stopping...");
@@ -55,7 +55,7 @@ public class ConsoleListener implements InputListener{
         } catch (HttpException e) {
             LOGGER.error("HTTP Error occurred: {}. Returning status code {}", e.getMessage(), e.getStatus());
             ResponseEntity entity = new ResponseEntity(String.format("An error occurred while handling your request:\n%s", e.getMessage()), e.getStatus());
-            HttpResponse response = new HttpResponse(entity, new StringifierDefaultImpl());
+            HttpResponse response = new HttpResponse(entity, new OutputConverterDefaultImpl());
             sendResponse(response);
         }
     }

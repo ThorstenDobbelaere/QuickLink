@@ -2,10 +2,10 @@ package demo.config.types;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import framework.configurables.Stringifier;
+import framework.configurables.OutputConverter;
 import framework.request.response.ContentType;
 
-public class JsonStringifier implements Stringifier {
+public class JsonOutputConverter implements OutputConverter {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @Override

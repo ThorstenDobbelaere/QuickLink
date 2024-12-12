@@ -1,16 +1,16 @@
 package framework.request.response;
 
-import framework.configurables.Stringifier;
+import framework.configurables.OutputConverter;
 
 public class HttpResponse {
     private final HttpStatus status;
     private final ContentType contentType;
     private final String body;
 
-    public HttpResponse(ResponseEntity entity, Stringifier stringifier) {
+    public HttpResponse(ResponseEntity entity, OutputConverter outputConverter) {
         this.status = entity.status();
-        this.contentType = stringifier.getContentType();
-        this.body = stringifier.stringify(entity.data());
+        this.contentType = outputConverter.getContentType();
+        this.body = outputConverter.stringify(entity.data());
     }
 
     public HttpResponse(HttpStatus status) {

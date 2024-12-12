@@ -1,6 +1,7 @@
 package framework.setup;
 
 import framework.context.QuickLinkContext;
+import framework.request.handlers.factory.HandlerFactory;
 import framework.setup.model.MappedController;
 import framework.setup.model.MappedControllerMethod;
 import framework.setup.reflection.ControllerMethodMapper;
@@ -20,7 +21,7 @@ public class RequestMapper {
         List<MappedControllerMethod> methods = ControllerMethodMapper.map(context, controllers);
 
         List<RequestHandler> requestHandlerList = methods.stream()
-                .map(mappedControllerMethod -> RequestHandler.createHandlerForMethod(context, mappedControllerMethod))
+                .map(mappedControllerMethod -> HandlerFactory.createHandlerForMethod(context, mappedControllerMethod))
                 .toList();
 
         String message = context.getLogFormatter().highlight("Request mapping complete. Available urls are:\n{}");

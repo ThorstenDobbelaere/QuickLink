@@ -1,6 +1,6 @@
 package demo.controller;
 
-import demo.config.types.JsonStringifier;
+import demo.config.types.JsonOutputConverter;
 import demo.model.Vendor;
 import demo.service.VendorService;
 import framework.annotations.injection.semantic.Controller;
@@ -16,9 +16,12 @@ public class VendorController {
         this.vendorService = vendorService;
     }
 
-    @OutputMapping(value = "/get", stringifier = JsonStringifier.class)
+    @OutputMapping(value = "/get", outputConverter = JsonOutputConverter.class)
     public ResponseEntity getVendor(String name) {
         Vendor vendor = vendorService.findVendorByName(name);
+        if (vendor == null) {
+            return new ResponseEntity(null, HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity(vendor, HttpStatus.OK);
     }
 }

@@ -2,11 +2,11 @@ package demo.config.types;
 
 import demo.model.Resource;
 import framework.annotations.Injectable;
-import framework.configurables.Stringifier;
+import framework.configurables.OutputConverter;
 import framework.request.response.ContentType;
 
 @Injectable
-public class ResourceToHtmlStringifier implements Stringifier {
+public class ResourceToHtmlOutputConverter implements OutputConverter {
     @Override
     public String stringify(Object o) {
         if (o==null)

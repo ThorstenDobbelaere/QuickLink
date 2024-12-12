@@ -4,10 +4,7 @@ import framework.context.QuickLinkContext;
 import framework.context.configurable.QuickLinkContextConfiguration;
 import framework.request.listener.InputListener;
 import framework.request.listener.InputListenerFactory;
-import framework.setup.CallResolver;
-import framework.setup.RequestMapper;
-import framework.setup.ObjectMapper;
-import framework.setup.ComponentScanner;
+import framework.setup.*;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -35,6 +32,9 @@ public class QuickLink {
 
         ComponentScanner.scanComponentsAndInterceptables(context);
         printTimeStamp(context, "component scanning");
+
+        GraphChecker.checkCycles(context);
+        printTimeStamp(context, "cycle checking");
 
         ObjectMapper.mapObjectsAndControllers(context);
         printTimeStamp(context, "object and controller mapping");
