@@ -5,7 +5,6 @@ import framework.annotations.mapping.InputMapping;
 import framework.annotations.mapping.OutputMapping;
 import framework.configurables.OutputConverter;
 import framework.context.QuickLinkContext;
-import framework.exceptions.request.RequestException;
 import framework.exceptions.request.RequestMappingException;
 import framework.request.handlers.RequestHandler;
 import framework.request.handlers.impl.CustomIORequestHandler;
@@ -15,7 +14,6 @@ import framework.request.response.ResponseEntity;
 import framework.setup.model.MappedControllerMethod;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
@@ -58,10 +56,7 @@ public class HandlerFactory {
         List<Class<?>> requiredTypes = Arrays.stream(methodInfo.callback().getParameterTypes()).toList();
         List<String> paramNames = Arrays.stream(methodInfo.callback().getParameters()).map(Parameter::getName).toList();
 
-        Consumer<Object[]> consumer = (input)-> {
-            try {methodInfo.callback().invoke(methodInfo.controller(), input);}
-            catch (IllegalAccessException | InvocationTargetException e) { throw RequestException.requestInvoked(e); }
-        };
+        Consumer<Object[]> consumer = HandlerMethodFactory.createHandlerConsumerReflect(methodInfo);
         return new InputRequestHandler(methodInfo.controllerMapping() + methodMapping, consumer, requiredTypes, paramNames);
     }
 
@@ -79,14 +74,11 @@ public class HandlerFactory {
         OutputConverter outputConverter = methodInfo.context().getInstanceOfType(outputConverterClass);
 
         if(returnType.equals(ResponseEntity.class)) {
-            Function<Object[] ,ResponseEntity> responseEntitySupplier = (input)->{
-                try{return (ResponseEntity) methodInfo.callback().invoke(methodInfo.controller(), input);}
-                catch(IllegalAccessException | InvocationTargetException e) { throw RequestException.requestInvoked(e); }
-            };
+            Function<Object[] ,ResponseEntity> responseEntitySupplier = HandlerMethodFactory.createHandlerMethodReflect(methodInfo, ResponseEntity.class);
             return new CustomIORequestHandler(url, outputConverter, responseEntitySupplier, requiredTypes, paramNames);
         }
 
-        Function<Object[], Object> handler = HandlerMethodFactory.createHandlerMethodReflect(methodInfo);
+        Function<Object[], Object> handler = HandlerMethodFactory.createHandlerMethodReflect(methodInfo, Object.class);
         return new IORequestHandler(url, outputConverter, handler, requiredTypes, paramNames);
     }
 }
