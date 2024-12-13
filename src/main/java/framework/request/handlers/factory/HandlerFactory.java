@@ -6,10 +6,10 @@ import framework.annotations.mapping.OutputMapping;
 import framework.configurables.conversions.OutputConverter;
 import framework.context.QuickLinkContext;
 import framework.exceptions.request.RequestMappingException;
-import framework.request.handlers.RequestHandler;
-import framework.request.handlers.impl.CustomIORequestHandler;
-import framework.request.handlers.impl.IORequestHandler;
-import framework.request.handlers.impl.InputRequestHandler;
+import framework.request.handlers.MappedRequestHandler;
+import framework.request.handlers.impl.CustomIOMappedRequestHandler;
+import framework.request.handlers.impl.IOMappedRequestHandler;
+import framework.request.handlers.impl.InputMappedRequestHandler;
 import framework.request.response.ResponseEntity;
 import framework.setup.model.MappedControllerMethod;
 
@@ -23,7 +23,7 @@ import java.util.function.Function;
 
 public class HandlerFactory {
 
-    public static RequestHandler createHandlerForMethod(QuickLinkContext context, MappedControllerMethod method) {
+    public static MappedRequestHandler createHandlerForMethod(QuickLinkContext context, MappedControllerMethod method) {
         Annotation annotation = method.annotation();
         String controllerMapping = method.controllerMapping();
         Method callback = method.method();
@@ -45,28 +45,28 @@ public class HandlerFactory {
         throw new RequestMappingException("Unknown annotation: " + annotation);
     }
 
-    private static RequestHandler createOutputRequestHandler(MethodInfo methodInfo, OutputMapping outputMapping) {
+    private static MappedRequestHandler createOutputRequestHandler(MethodInfo methodInfo, OutputMapping outputMapping) {
         Class<? extends OutputConverter> outputConverterClass = outputMapping.outputConverter();
         String methodUrl = outputMapping.value();
         return createIORequestHandler(methodInfo, methodUrl, outputConverterClass);
     }
 
-    private static RequestHandler createInputRequestHandler(MethodInfo methodInfo, InputMapping inputMapping) {
+    private static MappedRequestHandler createInputRequestHandler(MethodInfo methodInfo, InputMapping inputMapping) {
         String methodMapping = inputMapping.value();
         List<Class<?>> requiredTypes = Arrays.stream(methodInfo.callback().getParameterTypes()).toList();
         List<String> paramNames = Arrays.stream(methodInfo.callback().getParameters()).map(Parameter::getName).toList();
 
         Consumer<Object[]> consumer = HandlerMethodFactory.createHandlerConsumerReflect(methodInfo);
-        return new InputRequestHandler(methodInfo.controllerMapping() + methodMapping, consumer, requiredTypes, paramNames);
+        return new InputMappedRequestHandler(methodInfo.controllerMapping() + methodMapping, consumer, requiredTypes, paramNames);
     }
 
-    private static RequestHandler createIORequestHandler(MethodInfo methodInfo, IOMapping ioMapping) {
+    private static MappedRequestHandler createIORequestHandler(MethodInfo methodInfo, IOMapping ioMapping) {
         Class<? extends OutputConverter> outputConverterClass = ioMapping.outputConverter();
         String methodUrl = ioMapping.value();
         return createIORequestHandler(methodInfo, methodUrl, outputConverterClass);
     }
 
-    private static RequestHandler createIORequestHandler(MethodInfo methodInfo, String methodUrl, Class<? extends OutputConverter> outputConverterClass) {
+    private static MappedRequestHandler createIORequestHandler(MethodInfo methodInfo, String methodUrl, Class<? extends OutputConverter> outputConverterClass) {
         List<Class<?>> requiredTypes = Arrays.stream(methodInfo.callback().getParameterTypes()).toList();
         List<String> paramNames = Arrays.stream(methodInfo.callback().getParameters()).map(Parameter::getName).toList();
         Class<?> returnType = methodInfo.callback().getReturnType();
@@ -75,10 +75,10 @@ public class HandlerFactory {
 
         if(returnType.equals(ResponseEntity.class)) {
             Function<Object[] ,ResponseEntity> handler = HandlerMethodFactory.createHandlerMethodReflect(methodInfo, ResponseEntity.class);
-            return new CustomIORequestHandler(url, outputConverter, handler, requiredTypes, paramNames);
+            return new CustomIOMappedRequestHandler(url, outputConverter, handler, requiredTypes, paramNames);
         }
 
         Function<Object[], Object> handler = HandlerMethodFactory.createHandlerMethodReflect(methodInfo, Object.class);
-        return new IORequestHandler(url, outputConverter, handler, requiredTypes, paramNames);
+        return new IOMappedRequestHandler(url, outputConverter, handler, requiredTypes, paramNames);
     }
 }

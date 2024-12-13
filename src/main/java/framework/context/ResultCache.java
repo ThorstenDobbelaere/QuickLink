@@ -2,7 +2,7 @@ package framework.context;
 
 import framework.setup.model.Component;
 import framework.setup.model.MappedController;
-import framework.request.handlers.RequestHandler;
+import framework.request.handlers.MappedRequestHandler;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -11,10 +11,11 @@ import java.util.Set;
 
 public class ResultCache {
     private Set<Component> components;
-
     private Map<Class<?>, List<Method>> timedMethods;
+
+    private Map<Component, Object> componentObjectMap;
     private Set<MappedController> mappedControllers;
-    private List<RequestHandler> requestHandlerList;
+    private List<MappedRequestHandler> mappedRequestHandlerList;
 
     ResultCache(){}
 
@@ -34,12 +35,20 @@ public class ResultCache {
         this.mappedControllers = mappedControllers;
     }
 
-    public List<RequestHandler> getRequestHandlerList() {
-        return requestHandlerList;
+    public Map<Component, Object> getComponentObjectMap() {
+        return componentObjectMap;
     }
 
-    public void setRequestHandlerList(List<RequestHandler> requestHandlerList) {
-        this.requestHandlerList = requestHandlerList;
+    public void setComponentObjectMap(Map<Component, Object> componentObjectMap) {
+        this.componentObjectMap = componentObjectMap;
+    }
+
+    public List<MappedRequestHandler> getRequestHandlerList() {
+        return mappedRequestHandlerList;
+    }
+
+    public void setRequestHandlerList(List<MappedRequestHandler> mappedRequestHandlerList) {
+        this.mappedRequestHandlerList = mappedRequestHandlerList;
     }
 
     public Map<Class<?>, List<Method>> getTimedMethods() {

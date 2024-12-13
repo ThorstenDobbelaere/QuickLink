@@ -4,7 +4,7 @@ import framework.context.QuickLinkContext;
 import framework.context.RunMode;
 
 public class InputListenerFactory {
-    public static InputListener getInputListener(QuickLinkContext config) {
+    public static InputListener createInputListener(QuickLinkContext config) {
         RunMode runMode = config.getRunMode();
 
         return switch (runMode){

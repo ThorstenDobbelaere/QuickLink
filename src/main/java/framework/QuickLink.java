@@ -36,15 +36,18 @@ public class QuickLink {
         GraphChecker.checkCycles(context);
         printTimeStamp(context, "cycle checking");
 
-        ObjectMapper.mapObjectsAndControllers(context);
-        printTimeStamp(context, "object and controller mapping");
+        InjectableFactory.instantiateSingletons(context);
+        printTimeStamp(context, "injectable singleton instantiation");
 
-        RequestMapper.mapRequests(context);
-        printTimeStamp(context, "request mapping");
+        ControllerMapper.mapControllersToUrls(context);
+        printTimeStamp(context, "controller url mapping");
+
+        ControllerMethodMapper.mapHandlersForRequests(context);
+        printTimeStamp(context, "request handler url mapping");
 
         CallResolver.setup(context);
 
-        InputListener listener = InputListenerFactory.getInputListener(context);
+        InputListener listener = InputListenerFactory.createInputListener(context);
         printTimeStamp(context, "listener setup");
         try{
             listener.startListening();

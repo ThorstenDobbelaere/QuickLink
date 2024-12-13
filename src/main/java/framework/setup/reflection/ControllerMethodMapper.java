@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 public class ControllerMethodMapper {
-    public static List<MappedControllerMethod> map(QuickLinkContext context, Set<MappedController> controllers) {
+    public static List<MappedControllerMethod> getMappedMethodsForControllers(QuickLinkContext context, Set<MappedController> controllers) {
         return controllers.stream()
                 .map(mappedController -> mapMethodsForController(context, mappedController))
                 .reduce(new LinkedList<>(), (l1, l2)->{

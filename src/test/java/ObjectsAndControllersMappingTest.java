@@ -1,5 +1,6 @@
 import framework.context.QuickLinkContext;
-import framework.setup.ObjectMapper;
+import framework.setup.ControllerMapper;
+import framework.setup.InjectableFactory;
 import framework.setup.model.Component;
 import framework.setup.model.MappedController;
 import org.junit.jupiter.api.Assertions;
@@ -45,9 +46,11 @@ public class ObjectsAndControllersMappingTest {
         // Given a context for the test project
         var context = setupContext();
 
-        // When i map the components
-        ObjectMapper.mapObjectsAndControllers(context);
+        // When i instantiate the classes and map the controllers
+        InjectableFactory.instantiateSingletons(context);
+        ControllerMapper.mapControllersToUrls(context);
         Set<Component> generatedComponents = context.getCache().getComponents();
+        Set<MappedController> mappedControllers = context.getCache().getMappedControllers();
 
         // Then there's a DummyController component
         Optional<Component> component = generatedComponents.stream().filter(c->c.getType().equals(DummyController.class)).findFirst();
@@ -59,7 +62,6 @@ public class ObjectsAndControllersMappingTest {
         Assertions.assertEquals(pet, new Pet(new Person("Bartje", 22), "Max"));
 
         // And there's a controller mapped to /dummy
-        Set<MappedController> mappedControllers = context.getCache().getMappedControllers();
         Optional<MappedController> mappedController = mappedControllers.stream().filter(mc->mc.mapping().equals("/dummy")).findFirst();
         Assertions.assertTrue(mappedController.isPresent());
 

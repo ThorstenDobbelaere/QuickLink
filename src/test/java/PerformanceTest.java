@@ -13,9 +13,10 @@ public class PerformanceTest {
     private void setup(){
         QuickLinkContext context = new QuickLinkContext(DemoProject.class);
         ComponentScanner.scanComponentsAndInterceptables(context);
-        ObjectMapper.mapObjectsAndControllers(context);
+        InjectableFactory.instantiateSingletons(context);
         GraphChecker.checkCycles(context);
-        RequestMapper.mapRequests(context);
+        ControllerMapper.mapControllersToUrls(context);
+        ControllerMethodMapper.mapHandlersForRequests(context);
         CallResolver.setup(context);
     }
 

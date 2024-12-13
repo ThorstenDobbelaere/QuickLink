@@ -8,7 +8,7 @@ import framework.request.input.InputScanners;
 import framework.request.response.HttpResponse;
 import framework.request.response.HttpStatus;
 import framework.request.response.ResponseEntity;
-import framework.request.handlers.RequestHandler;
+import framework.request.handlers.MappedRequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,12 +17,12 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class IORequestHandler extends RequestHandler {
+public class IOMappedRequestHandler extends MappedRequestHandler {
     private final OutputConverter outputConverter;
     private final Function<Object[], Object> callback;
     private final List<String> paramNames;
     private final List<Class<?>> expectedClasses;
-    private static final Logger LOGGER = LoggerFactory.getLogger(IORequestHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IOMappedRequestHandler.class);
 
 
     @Override
@@ -39,7 +39,7 @@ public class IORequestHandler extends RequestHandler {
         }
     }
 
-    public IORequestHandler(String mapping, OutputConverter outputConverter, Function<Object[], Object> callback, List<Class<?>> expectedClasses, List<String> paramNames) {
+    public IOMappedRequestHandler(String mapping, OutputConverter outputConverter, Function<Object[], Object> callback, List<Class<?>> expectedClasses, List<String> paramNames) {
         super(mapping);
         this.outputConverter = outputConverter;
         this.callback = callback;

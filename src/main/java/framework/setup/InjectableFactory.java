@@ -3,7 +3,6 @@ package framework.setup;
 import framework.context.QuickLinkContext;
 import framework.exceptions.internal.InternalException;
 import framework.setup.model.Component;
-import framework.setup.model.MappedController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,38 +11,28 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ObjectMapper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ObjectMapper.class);
+public class InjectableFactory {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InjectableFactory.class);
 
-    public static void mapObjectsAndControllers(QuickLinkContext context) {
+    public static void instantiateSingletons(QuickLinkContext context) {
         var cache = context.getCache();
         Set<Component> components = cache.getComponents();
 
         Map<Class<?>, Component> typeToComponentMap = components.stream()
                 .collect(Collectors.toUnmodifiableMap(Component::getType, entry -> entry));
 
-        Map<Component, Object> entryToObjectMap = components.stream()
+        Map<Component, Object> componentObjectMap = components.stream()
                 .collect(Collectors.toUnmodifiableMap(
                         component -> component,
                         component -> resolve(component.getType(), typeToComponentMap)
                 ));
 
         String objectMessage = context.getLogFormatter().highlight("Class -> object mapping complete. Mappings are: \n{}");
-        LOGGER.debug(objectMessage, entryToObjectMap.entrySet().stream()
+        LOGGER.debug(objectMessage, componentObjectMap.entrySet().stream()
                 .map(entry->String.format("| - %-60s ->    %-80s |", entry.getKey().getType(), entry.getValue()))
                 .collect(Collectors.joining("\n")));
 
-        Set<MappedController> mappedControllerSet = entryToObjectMap.entrySet().stream()
-                .filter(entry->entry.getKey().isController())
-                .map(entry->new MappedController(entry.getKey().getControllerPath(), entry.getValue()))
-                .collect(Collectors.toUnmodifiableSet());
-
-        String controllerMessage = context.getLogFormatter().highlight("Url -> Controller mapping complete. Mappings are: \n{}");
-        LOGGER.debug(controllerMessage, mappedControllerSet.stream()
-                .map(mappedController -> String.format("| - %-60s ->    %-80s | ", mappedController.mapping(), mappedController.controller()))
-                .collect(Collectors.joining("\n")));
-
-        cache.setMappedControllers(mappedControllerSet);
+        cache.setComponentObjectMap(componentObjectMap);
 
     }
 
