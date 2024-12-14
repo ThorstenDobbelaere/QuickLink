@@ -1,6 +1,7 @@
 package testproject.controller;
 
 import framework.annotations.injection.semantic.Controller;
+import framework.annotations.mapping.OutputMapping;
 import testproject.model.Person;
 import testproject.model.Pet;
 import testproject.service.PetNameService;
@@ -15,7 +16,10 @@ public class DummyController {
         this.petOwner = petOwner;
     }
 
+    @OutputMapping("/pet")
     public Pet getPet(){
         return new Pet(petOwner, petNameService.getPetName());
     }
+
+
 }

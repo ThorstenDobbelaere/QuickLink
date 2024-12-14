@@ -31,7 +31,7 @@ public class QuickLink {
         printTimeStamp(context, "context setup");
 
         ComponentScanner.scanComponentsAndInterceptables(context);
-        printTimeStamp(context, "component scanning");
+        printTimeStamp(context, "component and intercept method scanning");
 
         GraphChecker.checkCycles(context);
         printTimeStamp(context, "cycle checking");

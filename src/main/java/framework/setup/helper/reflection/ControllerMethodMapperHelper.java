@@ -1,8 +1,8 @@
-package framework.setup.reflection;
+package framework.setup.helper.reflection;
 
 import framework.annotations.mapping.Mapping;
 import framework.context.QuickLinkContext;
-import framework.exceptions.scanning.DuplicateException;
+import framework.exceptions.componentscan.DuplicateException;
 import framework.setup.model.MappedController;
 import framework.setup.model.MappedControllerMethod;
 
@@ -10,7 +10,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class ControllerMethodMapper {
+public class ControllerMethodMapperHelper {
     public static List<MappedControllerMethod> getMappedMethodsForControllers(QuickLinkContext context, Set<MappedController> controllers) {
         return controllers.stream()
                 .map(mappedController -> mapMethodsForController(context, mappedController))

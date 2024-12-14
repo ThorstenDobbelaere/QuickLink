@@ -52,6 +52,82 @@ public class DemoProject {
 }
 ```
 
+## Dependency Injection
+Om aan dependency injection te doen, kan je aan een klasse een Component koppelen. Dit kan op twee manieren:
+- In een Config met @Bean
+- Los, met @Injectable
+
+Beide methoden van injectie zijn equivalent. 
+Je hebt exact dezelfde functionaliteit met Injectable als met Bean.
+Een uitzondering is Controller. (Zie [Mappings](#mappings))
+
+### Beans
+Je kan een Component aanmaken door in een klasse die met Config geannoteerd is een methode met Bean te
+annoteren. De parameters worden verondersteld ook bestaande Components te zijn. 
+Beans die niet in een Config staan, worden niet geregistreerd.
+Je kan bijvoorbeeld alle outputs transformeren met een custom converter.
+In dit voorbeeld wordt een JsonOutputConverter met default constructor op de klasse OutputConverter gemapt.
+Alle output zal in JSON formaat zijn.
+
+```java
+@Config
+public class ExampleConfig{
+    @Bean
+    public OutputConverter outputConverter(){
+        return new JsonOutputConverter(); // Zelf te implementeren
+    }
+}
+```
+
+### Injectable
+Je kan ook direct een Component maken en deze met Injectable annoteren. Controller, Service en Repository zijn
+varianten op Injectable. Voor Service en Repository is het verschil zuiver semantisch.
+Bij controllers worden de methodes gescand voor [Method Mappings](#mappings).
+Injectables worden gecreëerd op basis van hun constructor.
+
+```java
+public class ExampleService{
+    private final ExampleRepository exampleRepository;
+
+    // Injecteer exampleRepository via de constructor
+    public ExampleService(ExampleRepository exampleRepository){
+        this.exampleRepository = exampleRepository;
+    }
+    
+    // Gebruik hem zoals je gewoon bent
+    public Object exampleAction(){
+        return exampleRepository.exampleAction();
+    }
+}
+```
+
+#### PrimaryConstructor
+Als een Injectable meerdere construcors bevat, dan kan je de ambiguïteit oplossen met PrimaryConstructor.
+
+```java
+public class ExampleService{
+    private final ExampleRepository exampleRepository;
+    
+    public ExampleService(ExampleRepository exampleRepository){
+        this.exampleRepository = exampleRepository;
+    }
+
+    // Deze constructor zal worden aangeroepen.
+    // Je hoeft in dit geval geen ExampleRepository component te voorzien.
+    @PrimaryConstructor 
+    public ExampleService(){
+        this.exampleRepository = new ExampleRepository();
+    }
+    
+    // ...
+}
+```
+
+
+### Default injections
+Het framework voorziet ook een default injectie voor [OutputConverter](#outputconverter). 
+Deze geeft gewoon Object.toString() terug.
+
 ## Mappings
 Om een request aan een URL te linken, moet een mapping gebeuren. 
 Dit kan aan de hand van verschillende Mapping annotations. 
@@ -218,7 +294,9 @@ je Bean teruggeeft):
 
 
 In dit geval gebeurt er geen type casting, dus kan je de implementatie ook injecteren met de default constructor, door de
-klasse te annoteren met @Injectable. De bean in de config laat je in dat geval weg.
+klasse te annoteren met @Injectable. De bean in de config laat je in dat geval weg. 
+(Zie [Dependency Injection](#dependency-injection) voor een overzicht rond Config, Bean en Injectable.
+
 
 ```java
 @Injectable

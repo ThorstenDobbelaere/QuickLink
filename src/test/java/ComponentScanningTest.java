@@ -47,7 +47,7 @@ public class ComponentScanningTest {
         // And i don't find other classes
         Assertions.assertTrue(componentScanTestComponent.isEmpty());
 
-        // And i find the timed methods.
+        // And i find the correct number of timed methods.
         Assertions.assertEquals(2, context.getCache().getTimedMethods().entrySet().size());
     }
 

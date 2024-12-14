@@ -1,4 +1,4 @@
-package framework.exceptions;
+package framework.exceptions.wrapper;
 
 import framework.request.response.HttpStatus;
 

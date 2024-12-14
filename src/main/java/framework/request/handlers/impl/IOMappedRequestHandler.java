@@ -1,7 +1,7 @@
 package framework.request.handlers.impl;
 
 import framework.configurables.conversions.OutputConverter;
-import framework.exceptions.HttpException;
+import framework.exceptions.wrapper.HttpException;
 import framework.exceptions.request.RequestException;
 import framework.exceptions.request.RequestParameterScanningException;
 import framework.request.input.InputScanners;

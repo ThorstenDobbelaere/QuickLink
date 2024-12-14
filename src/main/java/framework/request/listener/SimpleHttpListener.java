@@ -1,13 +1,10 @@
 package framework.request.listener;
 
-import framework.configurables.conversions.impl.OutputConverterDefaultImpl;
 import framework.context.QuickLinkContext;
 import framework.context.config.ListenerConfiguration;
 import framework.context.config.LogFormatter;
-import framework.exceptions.HttpException;
 import framework.request.response.HttpResponse;
 import framework.request.response.HttpStatus;
-import framework.request.response.ResponseEntity;
 import framework.setup.CallResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,17 +80,8 @@ public class SimpleHttpListener implements InputListener{
             return;
         }
         String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
-
-        try {
-            HttpResponse response = CallResolver.handleCall(decodedUrl);
-            sendResponse(response, socket);
-        } catch (HttpException e) {
-            LOGGER.error("HTTP Error occurred: {}. Returning status code {}", e.getMessage(), e.getStatus());
-            ResponseEntity entity = new ResponseEntity(String.format("An error occurred while handling your request:\n%s", e.getMessage()), e.getStatus());
-            HttpResponse response = new HttpResponse(entity, new OutputConverterDefaultImpl());
-            sendResponse(response, socket);
-        }
-
+        HttpResponse response = CallResolver.handleCall(decodedUrl);
+        sendResponse(response, socket);
     }
 
     private void sendResponse(HttpResponse response, Socket socket) throws IOException {

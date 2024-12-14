@@ -42,7 +42,7 @@ public class HandlerFactory {
             return createIORequestHandler(methodInfo, ioMapping);
         }
 
-        throw new RequestMappingException("Unknown annotation: " + annotation);
+        throw RequestMappingException.unsupportedMethodAnnotation(annotation.annotationType());
     }
 
     private static MappedRequestHandler createOutputRequestHandler(MethodInfo methodInfo, OutputMapping outputMapping) {

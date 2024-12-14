@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class ObjectsAndControllersMappingTest {
+public class InjectionAndUrlMappingTest {
 
     private QuickLinkContext setupContext() throws NoSuchMethodException {
         QuickLinkContext context = new QuickLinkContext(DummyProjectMain.class);
@@ -70,13 +70,13 @@ public class ObjectsAndControllersMappingTest {
         Assertions.assertInstanceOf(DummyController.class, controller);
 
         //      Significance / Tested Mappings:
-        //      AgeRepository -> Age = 22               (from AgeRepository default constructor:    Component creation)
-        //      String -> Bartje                        (directly from PrimitiveConfig:             Bean creation)
-        //      Integer -> 22                           (from AgeRepository dependency:             Component -> Bean injection)
-        //      Person -> Age = 22, Name = Bartje       (from previous beans:                       Bean -> Bean injection + hierarchical injection + multiple injection types in Bean)
-        //      PetNameRepository -> referenceName = Max         (from default constructor)
-        //      PetNameService -> referenceName = Max            (from PetNameRepository)                    Component -> Component
-        //      Pet -> Person = Bartje, Name = Max      (from Bean + PetNameService)                Component -> Component, Bean -> Component, multiple injection types in Component)
+        //      AgeRepository -> Age = 22                       (from AgeRepository default constructor:    Component creation)
+        //      String -> Bartje                                (directly from PrimitiveConfig:             Bean creation)
+        //      Integer -> 22                                   (from AgeRepository dependency:             Component -> Bean injection)
+        //      Person -> Age = 22, Name = Bartje               (from previous beans:                       Bean -> Bean injection + hierarchical injection + multiple injection types in Bean)
+        //      PetNameRepository -> referenceName = Max        (from default constructor)
+        //      PetNameService -> referenceName = Max           (from PetNameRepository)                    Component -> Component
+        //      Pet -> Person = Bartje, Name = Max              (from Bean + PetNameService)                Component -> Component, Bean -> Component, multiple injection types in Component)
     }
 
 }

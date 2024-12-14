@@ -1,4 +1,4 @@
-package framework.exceptions.scanning;
+package framework.exceptions.componentscan;
 
 import framework.annotations.clarification.PrimaryConstructor;
 

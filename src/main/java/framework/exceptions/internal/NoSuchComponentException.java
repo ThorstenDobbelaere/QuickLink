@@ -1,4 +1,4 @@
-package framework.exceptions;
+package framework.exceptions.internal;
 
 public class NoSuchComponentException extends RuntimeException {
     public NoSuchComponentException(Class<?> componentType) {

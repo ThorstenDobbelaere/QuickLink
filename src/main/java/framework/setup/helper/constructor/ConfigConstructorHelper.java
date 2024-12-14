@@ -1,6 +1,6 @@
 package framework.setup.helper.constructor;
 
-import framework.exceptions.scanning.ConstructorScanException;
+import framework.exceptions.componentscan.ConstructorScanException;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;

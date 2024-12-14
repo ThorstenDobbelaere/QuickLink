@@ -1,4 +1,4 @@
-package framework.exceptions.scanning;
+package framework.exceptions.cycles;
 
 import java.util.Set;
 import java.util.stream.Collectors;

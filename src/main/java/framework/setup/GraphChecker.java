@@ -1,7 +1,7 @@
 package framework.setup;
 
 import framework.context.QuickLinkContext;
-import framework.exceptions.scanning.CyclicalDependencyException;
+import framework.exceptions.cycles.CyclicalDependencyException;
 import framework.setup.model.Component;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.cycle.CycleDetector;
@@ -33,7 +33,6 @@ public class GraphChecker {
         }
 
         LOGGER.info("No cyclical dependencies found.");
-
     }
 
 }
