@@ -19,6 +19,9 @@ public class HandlerMethodFactory {
             if(returnType.isInstance(result)) {
                 return returnType.cast(result);
             }
+            if(result == null) {
+                return null;
+            }
             throw new InternalException("Wrong return type");
         };
     }
@@ -26,7 +29,7 @@ public class HandlerMethodFactory {
     public static Consumer<Object[]> createHandlerConsumerReflect(MethodInfo methodInfo) {
         return (args) -> {
             try{
-                methodInfo.callback().invoke(args);
+                methodInfo.callback().invoke(methodInfo.controller(), args);
             } catch (InvocationTargetException | IllegalAccessException e) {
                 throw RequestException.requestInvoked(e);
             }

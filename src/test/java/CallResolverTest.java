@@ -4,7 +4,7 @@ import framework.request.response.HttpStatus;
 import framework.setup.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import testproject.DummyProjectMain;
+import testprojects.testproject.DummyProjectMain;
 
 public class CallResolverTest {
 

@@ -27,8 +27,20 @@ public class ResourceRepository {
         nextId++;
     }
 
-    public void removeResource(int id) {
+    public void deleteResource(String referenceName) {
+        var optionalEntry = resources.entrySet()
+                .stream()
+                .filter(e->e.getValue().referenceName().equals(referenceName))
+                .findFirst();
+        if(optionalEntry.isEmpty()) {
+            return;
+        }
+        int id = optionalEntry.get().getKey();
         resources.remove(id);
+    }
+
+    public Resource getResourceByReferenceName(String name) {
+        return resources.values().stream().filter(resource -> resource.referenceName().equals(name)).findFirst().orElse(null);
     }
 
     public Resource getResource(int id) {

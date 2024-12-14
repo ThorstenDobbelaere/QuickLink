@@ -1,14 +1,14 @@
-import cyclicalproject.CyclicalProjectMain;
-import cyclicalproject.service.CyclicalService1;
-import cyclicalproject.service.CyclicalService2;
-import cyclicalproject.service.CyclicalService3;
+import testprojects.cyclicalproject.CyclicalProjectMain;
+import testprojects.cyclicalproject.service.CyclicalService1;
+import testprojects.cyclicalproject.service.CyclicalService2;
+import testprojects.cyclicalproject.service.CyclicalService3;
 import framework.context.QuickLinkContext;
 import framework.exceptions.cycles.CyclicalDependencyException;
 import framework.setup.ComponentScanner;
 import framework.setup.GraphChecker;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import testproject.DummyProjectMain;
+import testprojects.testproject.DummyProjectMain;
 
 import java.util.Arrays;
 import java.util.HashSet;

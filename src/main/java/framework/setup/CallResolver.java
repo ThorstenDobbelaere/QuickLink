@@ -34,6 +34,9 @@ public class CallResolver {
         if (!doesUrlMatchMapping(url, mapping)) {
             throw new HttpException(new NotFoundException("Unable to map request"), HttpStatus.BAD_REQUEST);
         }
+
+        LOGGER.debug("Mapped input {} to {}", url, mapping);
+
         return mapping;
     }
 
@@ -61,7 +64,10 @@ public class CallResolver {
     private static HttpResponse handleMappedRequest(String url, String mapping) {
         try{
             MappedRequestHandler mappedRequestHandler = requestHandlerMap.get(mapping);
-            return mappedRequestHandler.handle(url.substring(mapping.length()));
+            String args = url.substring(mapping.length());
+            LOGGER.debug("Mapping = {}, Args = {}", mapping, args);
+
+            return mappedRequestHandler.handle(args);
         } catch (RequestParameterScanningException e){
             throw new HttpException(e, HttpStatus.BAD_REQUEST);
         }
@@ -86,7 +92,7 @@ public class CallResolver {
 
     public static HttpResponse handleCall(String url) {
         try{
-            return tryHandleCall(checkMapping(url));
+            return tryHandleCall(url);
         } catch (HttpException e) {
             LOGGER.error("HTTP Error occurred: {}. Returning status code {}", e.getMessage(), e.getStatus());
             ResponseEntity entity = new ResponseEntity(String.format("An error occurred while handling your request:\n%s", e.getMessage()), e.getStatus());

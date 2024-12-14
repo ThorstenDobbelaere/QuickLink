@@ -6,6 +6,7 @@ import framework.request.response.ContentType;
 public class OutputConverterDefaultImpl implements OutputConverter {
     @Override
     public String stringify(Object o) {
+        if(o == null) return "";
         return o.toString();
     }
 

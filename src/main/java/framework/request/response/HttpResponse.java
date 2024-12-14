@@ -15,7 +15,7 @@ public class HttpResponse {
 
     public HttpResponse(HttpStatus status) {
         this.status = status;
-        this.contentType = ContentType.JSON;
+        this.contentType = ContentType.PLAIN;
         this.body = "";
     }
 

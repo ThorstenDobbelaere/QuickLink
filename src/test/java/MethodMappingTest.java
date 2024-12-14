@@ -1,12 +1,12 @@
-import ambiguityproject.AmbiguityProjectMain;
-import emptymappingproject.EmptyMappingProjectMain;
+import testprojects.ambiguityproject.AmbiguityProjectMain;
+import testprojects.emptymappingproject.EmptyMappingProjectMain;
 import framework.context.QuickLinkContext;
 import framework.exceptions.componentscan.DuplicateException;
 import framework.exceptions.componentscan.MappingException;
 import framework.setup.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import testproject.DummyProjectMain;
+import testprojects.testproject.DummyProjectMain;
 
 public class MethodMappingTest {
     private void setup(Class<?> baseClass){

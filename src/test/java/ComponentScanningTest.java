@@ -3,11 +3,11 @@ import framework.setup.ComponentScanner;
 import framework.setup.model.Component;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import testproject.DummyProjectMain;
-import testproject.controller.DummyController;
-import testproject.model.Person;
-import testproject.repo.AgeRepository;
-import testproject.service.PetNameService;
+import testprojects.testproject.DummyProjectMain;
+import testprojects.testproject.controller.DummyController;
+import testprojects.testproject.model.Person;
+import testprojects.testproject.repo.AgeRepository;
+import testprojects.testproject.service.PetNameService;
 
 import java.util.Optional;
 

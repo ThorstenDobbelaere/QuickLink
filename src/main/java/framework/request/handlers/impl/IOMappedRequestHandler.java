@@ -32,7 +32,8 @@ public class IOMappedRequestHandler extends MappedRequestHandler {
             LOGGER.debug("Parsed inputs: {}", Arrays.stream(parsedInputs).toList());
 
             Object result = callback.apply(parsedInputs);
-            ResponseEntity entity = new ResponseEntity(result, HttpStatus.OK);
+            HttpStatus status = result == null ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+            ResponseEntity entity = new ResponseEntity(result, status);
             return new HttpResponse(entity, outputConverter);
         } catch (RequestParameterScanningException e){
             throw new HttpException(e, HttpStatus.BAD_REQUEST);
