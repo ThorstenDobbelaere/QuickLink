@@ -35,7 +35,7 @@ public class PerformanceTest {
 
         Instant start = Instant.now();
         for(int i = 0; i < callCount; i++){
-            CallResolver.handleCall("/resource/1");
+            CallResolver.handleCall("/resources/1");
         }
         Instant end = Instant.now();
         LOGGER.info("Regular method took {} ms for {} calls", end.toEpochMilli() - start.toEpochMilli(), callCount);
@@ -48,7 +48,7 @@ public class PerformanceTest {
 
         Instant start = Instant.now();
         for(int i = 0; i < callCount; i++){
-            CallResolver.handleCall("/warehouse/find/Mark/iron_ore");
+            CallResolver.handleCall("/warehouse/Mark/iron_ore");
         }
         Instant end = Instant.now();
         LOGGER.info("Timed method took {} ms for {} calls", end.toEpochMilli() - start.toEpochMilli(), callCount);

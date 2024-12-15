@@ -1,4 +1,4 @@
-package demo.config.types;
+package demo.config.output;
 
 public class HtmlHelper {
     public static String createHtmlString(String title, String header, String body) {

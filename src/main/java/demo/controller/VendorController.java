@@ -1,6 +1,6 @@
 package demo.controller;
 
-import demo.config.types.JsonOutputConverter;
+import demo.config.output.JsonOutputConverter;
 import demo.model.Vendor;
 import demo.service.VendorService;
 import framework.annotations.injection.semantic.Controller;

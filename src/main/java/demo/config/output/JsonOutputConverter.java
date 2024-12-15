@@ -1,4 +1,4 @@
-package demo.config.types;
+package demo.config.output;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

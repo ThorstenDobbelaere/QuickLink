@@ -1,5 +1,6 @@
 package demo;
 
+import demo.config.OutputConverterConfig;
 import framework.QuickLink;
 import framework.context.RunMode;
 import framework.context.config.ListenerConfiguration;
@@ -24,6 +25,7 @@ public class DemoProject {
                     shutdownUrl = arg.split("=")[1];
                 }
                 if(arg.equals("--console")){
+                    OutputConverterConfig.setIsConsole(true);
                     runMode = RunMode.CONSOLE;
                 }
             }
