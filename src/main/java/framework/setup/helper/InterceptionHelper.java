@@ -1,6 +1,7 @@
 package framework.setup.helper;
 
 import framework.annotations.interception.Timed;
+import framework.exceptions.componentscan.AccessException;
 import framework.exceptions.internal.InternalException;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.time.Instant;
 import java.util.Arrays;
 
@@ -19,6 +21,14 @@ public class InterceptionHelper {
     public static Object instantiateAnnotationInterceptedComponent(Class<?> type, Constructor<?> constructor, Object[] args) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         ProxyFactory proxyFactory = new ProxyFactory();
         proxyFactory.setSuperclass(type);
+
+        Method[] methods = type.getDeclaredMethods();
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(Timed.class) && Modifier.isPrivate(method.getModifiers())) {
+                throw AccessException.timedMethodPrivate(method);
+            }
+        }
+
         proxyFactory.setFilter(method -> Arrays.stream(method.getDeclaredAnnotations())
                 .anyMatch(annotation -> annotation.annotationType().equals(Timed.class))
         );
@@ -40,11 +50,8 @@ public class InterceptionHelper {
 
         @Override
         public Object invoke(Object o, Method method, Method method1, Object[] objects) throws Throwable {
-            if (!method.isAnnotationPresent(Timed.class)) {
-                return method.invoke(original);
-            }
-
             Instant start = Instant.now();
+            AccessibilityHelper.trySetMethodAccessible(method);
             Object result = method.invoke(original, objects);
             Instant end = Instant.now();
             TIMED_LOGGER.info("Timed method {} took {} ms", method.getName(), end.toEpochMilli() - start.toEpochMilli());

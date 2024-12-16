@@ -15,10 +15,10 @@ public class VendorRepository {
 
     public VendorRepository() {
         this.vendors = new HashMap<>();
-        vendors.put(1, new Vendor("Mark", "Mark's address"));
-        vendors.put(2, new Vendor("Bob", "Bob's address"));
-        vendors.put(3, new Vendor("John", "John's address"));
-        vendors.put(4, new Vendor("Jane", "Jane's address"));
+        vendors.put(1, new Vendor("Mark", "Wilgenlaan 12 - Amsterdam"));
+        vendors.put(2, new Vendor("Bob", "Bergzicht 89 - Rotterdam"));
+        vendors.put(3, new Vendor("John", "Kastanjedreef 45 - Utrecht"));
+        vendors.put(4, new Vendor("Jane", "Zonnestraat 67 - Den Haag"));
         nextId = 5;
     }
 

@@ -48,7 +48,7 @@ public class PerformanceTest {
 
         Instant start = Instant.now();
         for(int i = 0; i < callCount; i++){
-            CallResolver.handleCall("/warehouse/Mark/iron_ore");
+            CallResolver.handleCall("/warehouses/Mark/iron_ore");
         }
         Instant end = Instant.now();
         LOGGER.info("Timed method took {} ms for {} calls", end.toEpochMilli() - start.toEpochMilli(), callCount);

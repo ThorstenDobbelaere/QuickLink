@@ -71,7 +71,7 @@ public class ResourceTests {
         // When i look for a resource that doesn't exist
         HttpResponse response = CallResolver.handleCall("/resources/-1");
 
-        // Then I get not found
+        // Then I get no content
         Assertions.assertSame(HttpStatus.NO_CONTENT, response.getStatus());
         Assertions.assertSame(ContentType.PLAIN, response.getContentType());
         Assertions.assertTrue(response.getBody().isEmpty());

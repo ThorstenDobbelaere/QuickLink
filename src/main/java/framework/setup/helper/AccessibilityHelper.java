@@ -11,7 +11,7 @@ public class AccessibilityHelper {
             method.setAccessible(true);
             return method;
         } catch (Exception e) {
-            throw AccessException.ofMethod(method, e);
+            throw AccessException.timedMethodPrivate(method, e);
         }
     }
 

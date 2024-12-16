@@ -333,7 +333,7 @@ Als default wordt OK terug gegeven als de methode zonder errors werd afgerond.
 
 ### Timed
 Alle methoden van geïnjecteerde klassen kan je als @Timed annoteren. Deze loggen dan hoelang ze bezig waren wanneer
-ze klaar zijn, in milliseconden.
+ze klaar zijn, in milliseconden. Een private timed methode geeft een exception tijdens de setup.
 
 ```java
     @Timed

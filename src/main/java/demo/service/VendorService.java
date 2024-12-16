@@ -5,6 +5,8 @@ import demo.repository.VendorRepository;
 import framework.annotations.clarification.PrimaryConstructor;
 import framework.annotations.injection.semantic.Service;
 
+import java.util.List;
+
 @Service
 public class VendorService {
     private final VendorRepository vendorRepository;
@@ -22,5 +24,9 @@ public class VendorService {
     public Vendor findVendorByName(String name) {
         int id = vendorRepository.getIdForVendor(name);
         return vendorRepository.getVendor(id);
+    }
+
+    public List<Vendor> findAllVendors() {
+        return vendorRepository.getVendors();
     }
 }
