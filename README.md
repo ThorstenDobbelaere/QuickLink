@@ -15,7 +15,7 @@ Om de demo als HTTP API uit te voeren, kan je volgend commando uitvoeren:
 ./gradlew run --args="--port=4040 --shutdown=/stop"
 ```
 
-Je kan [demo.http](./src/main/java/demo/demo.http) gebruiken om een idee te krijgen van de structuur van de requests.
+Je kan [demo.html](./demo.html) gebruiken om een overzicht te krijgen van het demoproject.
 
 Om de demo als console app uit te voeren, kan je deze arguments gebruiken:
 ```shell

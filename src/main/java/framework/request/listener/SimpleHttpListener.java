@@ -60,6 +60,9 @@ public class SimpleHttpListener implements InputListener{
 
     private void processHttp(String httpRequest, Socket socket) {
         LOGGER.trace("HTTP request: {}", httpRequest);
+        if(httpRequest.isEmpty()){
+            return;
+        }
         try{
             String firstLine = httpRequest.split("\n")[0];
             String url = firstLine.split(" ")[1];
@@ -79,6 +82,13 @@ public class SimpleHttpListener implements InputListener{
             sendResponse(ok, socket);
             return;
         }
+
+        if(url.equals("/favicon.ico")){
+            HttpResponse notFound = new HttpResponse(HttpStatus.NOT_FOUND);
+            sendResponse(notFound, socket);
+            return;
+        }
+
         String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
         HttpResponse response = CallResolver.handleCall(decodedUrl);
         sendResponse(response, socket);
@@ -87,7 +97,7 @@ public class SimpleHttpListener implements InputListener{
     private void sendResponse(HttpResponse response, Socket socket) throws IOException {
         LOGGER.debug("Response:\n{}", logFormatter.highlight(convertToHttp(response)));
 
-        try(var os = new DataOutputStream(socket.getOutputStream())){
+        try (socket; var os = new DataOutputStream(socket.getOutputStream())) {
             os.write(convertToHttp(response).getBytes(StandardCharsets.UTF_8));
         }
     }
@@ -96,8 +106,10 @@ public class SimpleHttpListener implements InputListener{
         return String.format("""
         HTTP/1.1 %d
         Content-Type: %s
+        Access-Control-Allow-Origin: *
+        Content-Length: %d
         
         %s
-        """, response.getStatus().getCode(), response.getContentType().getHttpString(), response.getBody());
+        """, response.getStatus().getCode(), response.getContentType().getHttpString(), response.getBody().length(), response.getBody());
     }
 }

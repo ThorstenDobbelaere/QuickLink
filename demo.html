@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QuickLink Demo</title>
+</head>
+
+<body>
+    <h1>Resources</h1>
+    <p>Dit is een demo van Input/Output/IO</p>
+    <p>Je kan resources ophalen met /resources/{id}.</p>
+    <span class="call" data-url="/resources/1"></span>
+    <span class="call" data-url="/resources/2"></span>
+    <p>Resource 5 bestaat niet, en geeft no content terug</p>
+    <span class="call" data-url="/resources/5"></span>
+    <p>Ophalen van alle resources:</p>
+    <span class="call" data-url="/resources/all"></span>
+    <p>Toevoegen en verwijderen van resources:</p>
+    <span class="call" data-url="/resources/delete/coke"></span>
+    <p>Toevoegen met Input en IO</p>
+    <span class="call" data-url="/resources/create-input/Nickel%20Ore/nickel_ore/3.44"></span>
+    <span class="call" data-url="/resources/create-io/Nickel/nickel/5.66"></span>
+    <span class="call" data-url="/resources/all"></span>
+    <p>Ophalen van een resource met reference name</p>
+    <span class="call" data-url="/resources/name/nickel_ore"></span>
+    <h1>Warehouses</h1>
+    <p>Er is ondersteuning voor verschillende content types en output formatting met OutputConverter</p>
+    <span class="call" data-url="/warehouses/Mark/iron_ore"></span>
+    <span class="call" data-url="/warehouses/as-json/Mark/iron_ore"></span>
+    <span class="call" data-url="/warehouses/as-html/Mark/iron_ore"></span>
+    <h1>Vendors</h1>
+    <p>Response entities kunnen eigen status codes teruggeven, afhankelijk van de situatie</p>
+    <p>Verkeerd wachtwoord = Unauthorized</p>
+    <span class="call" data-url="/vendors/all/username/password"></span>
+    <span class="call" data-url="/vendors/all/admin/admin"></span>
+    <p>Timed methodes geven een output in de console</p>
+    <span class="call" data-url="/vendors/timed"></span>
+</body>
+
+<style>
+    .call-output {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 10px;
+        margin: 10px 0;
+        background-color: #f9f9f9;
+        position: relative;
+    }
+
+    .response-metadata {
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        font-size: 1.5rem;
+        color: #555;
+    }
+
+    .response-content {
+        margin-top: 20px;
+        white-space: pre-wrap;
+        font-family: monospace;
+        font-size: 1.5rem;
+    }
+
+    .call-title{
+        color: #555555;
+        font-size: large;
+        font-family: Verdana, sans-serif;
+    }
+
+    h1 {
+        font-size: 3rem;
+        font-family: Verdana, sans-serif;
+        padding-left: 2rem;
+    }
+
+    h2 {
+        font-size: 2.5rem;
+        font-family: Verdana, sans-serif;
+        padding-left: 2rem;
+        color: #777;
+    }
+
+    p {
+        font-size: 1rem;
+        font-family: Verdana, sans-serif;
+        padding-left: 2rem;
+        color: #444;
+    }
+
+    .call {
+        margin: 20px;
+        padding: 20px;
+        background: #eeeeee;
+        border-radius: 2rem;
+        display: block;
+    }
+
+    button {
+        margin: 10px 0;
+        padding: 8px 12px;
+        background-color: #888888;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1.5rem;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<script>
+    let idCount = 0;
+
+    function nextId() {
+        idCount++;
+        return idCount;
+    }
+
+    function writeOutput(output, elementId) {
+        const outputElement = document.getElementById(elementId);
+        const [content, metadata] = output.split("\n\n(Status:");
+
+        const responseContent = document.createElement("div");
+        responseContent.textContent = content;
+        responseContent.className = "response-content";
+
+        const responseMetadata = document.createElement("div");
+        responseMetadata.textContent = `Status: ${metadata}`;
+        responseMetadata.className = "response-metadata";
+
+        outputElement.innerHTML = "";
+        outputElement.appendChild(responseMetadata);
+        outputElement.appendChild(responseContent);
+    }
+
+    async function writeIntoElement(response, elementId) {
+        console.log(response);
+        const text = await response.text();
+        console.log(text);
+        const code = response.status;
+        const contentType = response.headers.get("Content-Type");
+
+        const result = `${text}\n\n(Status: ${code}, Content Type: ${contentType})`;
+        writeOutput(result, elementId);
+    }
+
+    function fetchAndWrite(url, elementId) {
+        console.log(`Fetching ${url}`)
+        fetch(`http://localhost:4040${url}`)
+            .then(response => writeIntoElement(response, elementId));
+    }
+
+    function addExample(callSpan, url) {
+        let outputId = "output_" + nextId();
+        const container = document.createElement("div");
+        container.className = "call-output";
+        container.id = outputId
+
+        const title = document.createElement("p")
+        title.textContent = url
+        title.classList.add("call-title")
+
+        const button = document.createElement("button");
+        button.textContent = "Fetch";
+        button.onclick = () => fetchAndWrite(url, outputId);
+
+        callSpan.appendChild(title)
+        callSpan.appendChild(container);
+        callSpan.appendChild(button);
+    }
+
+    function fillExamples(){
+        const calls = document.querySelectorAll("span.call");
+
+        calls.forEach(element => {
+            const url = element.getAttribute("data-url");
+            if (url) {
+                addExample(element, url);
+            }
+        });
+    }
+
+    fillExamples()
+</script>
+</html>
