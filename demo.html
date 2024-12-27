@@ -64,8 +64,10 @@
 
     .call-title{
         color: #555555;
-        font-size: large;
+        font-size: 1.2rem;
         font-family: Verdana, sans-serif;
+        text-decoration: none;
+        font-weight: bold;
     }
 
     h1 {
@@ -160,9 +162,11 @@
         container.className = "call-output";
         container.id = outputId
 
-        const title = document.createElement("p")
+        const title = document.createElement("a")
         title.textContent = url
         title.classList.add("call-title")
+        title.href = "http://localhost:4040" + url
+        title.target = "_blank"
 
         const button = document.createElement("button");
         button.textContent = "Fetch";
