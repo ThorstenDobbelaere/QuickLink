@@ -1,8 +1,9 @@
 # QuickLink Docs
-
 - Naam student: Thorsten Dobbelaere
 - Naam framework: QuickLink
 - Type framework: Java DI
+
+Context: QuickLink was een project voor school bij Karel de Grote, rond Dependency Injection in Java. Ik ben niet van plan om de architectuur te onderhouden, maar als je vragen hebt, kan je me altijd iets op [LinkedIn](https://www.linkedin.com/in/thorsten-dobbelaere-a88277341/) sturen.
 
 QuickLink is een eenvoudig Dependency Injection framework voor java op basis van annotaties. Het is ontworpen om licht 
 en configureerbaar te zijn. Dit betekent wel dat je als eindgebruiker zelf bepaalde conversions implementeert. Denk aan 
@@ -102,7 +103,7 @@ public class ExampleService{
 ```
 
 #### PrimaryConstructor
-Als een Injectable meerdere construcors bevat, dan kan je de ambiguïteit oplossen met PrimaryConstructor.
+Als een Injectable meerdere constructors bevat, dan kan je de ambiguïteit oplossen met PrimaryConstructor.
 
 ```java
 public class ExampleService{
@@ -169,7 +170,7 @@ en er wordt een HTTP response van gemaakt.
 
 ### IOMapping
 Een methode met @IOMapping doet hetzelfde als OutputMapping, maar er is een semantisch verschil.
-IOMapping wordt verondersteld het systeem te wijzigen. (~ POST)
+IOMapping wordt verondersteld wijzigingen aan te brengen. (~ POST/PUT)
 
 ```java
     @IOMapping("/create-resource")
@@ -185,11 +186,8 @@ worden genegeerd. Zie [InputMapping](#inputmapping) voor details rond parameters
 ## Configureerbaarheid
 
 ### Context Configuraties
-Er zijn verschillende settings die je aan het framework kan meegeven om het gedrag te wijzigen. Deze kunnen worden
-meegegeven aan het framework met de QuickLinkContextConfiguration. Dit kan je doen aan de hand van een QuickLinkContextConfiguration
-object, dat je mee kan geven bij het aanroepen van de run methode. Alle Configuration objecten kunnen apart aangemaakt
-worden en in een QuickLinkContextConfiguration geïnjecteerd worden, om vervolgens meegegeven te worden aan de run-methode
-van het framework.
+Er zijn verschillende settings die je aan het framework kan meegeven om het gedrag te wijzigen. Dit kan je doen door een QuickLinkContextConfiguration object mee te geven bij het aanroepen van de run methode. Alle Configuration objecten kunnen apart aangemaakt
+worden en in QuickLinkContextConfiguration geïnjecteerd worden.
 
 ```java
 public class DemoProject {
@@ -291,11 +289,8 @@ je Bean teruggeeft):
     }
 ```
 
-
-
-In dit geval gebeurt er geen type casting, dus kan je de implementatie ook injecteren met de default constructor, door de
-klasse te annoteren met @Injectable. De bean in de config laat je in dat geval weg. 
-(Zie [Dependency Injection](#dependency-injection) voor een overzicht rond Config, Bean en Injectable.
+In dit geval wordt JsonOutputConverter in de bean niet geconverteerd naar een superklasse, dus kan je de implementatie ook injecteren met de default constructor, door de klasse te annoteren met @Injectable. De bean in de config laat je in dat geval weg. 
+(Zie [Dependency Injection](#dependency-injection) voor een overzicht rond Config, Bean en Injectable.)
 
 
 ```java
