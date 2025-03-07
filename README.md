@@ -10,7 +10,7 @@ en configureerbaar te zijn. Dit betekent wel dat je als eindgebruiker zelf bepaa
 JSON of HTML mapping. Deze zijn niet ingebouwd in het framework.
 
 ## Demo
-Om de demo als HTTP API uit te voeren, kan je volgend commando uitvoeren:
+Om de demo als HTTP server op te starten, kan je volgend commando uitvoeren:
 
 ```shell
 ./gradlew run --args="--port=4040 --shutdown=/stop"
@@ -18,7 +18,7 @@ Om de demo als HTTP API uit te voeren, kan je volgend commando uitvoeren:
 
 Je kan [demo.html](./demo.html) gebruiken om een overzicht te krijgen van het demoproject.
 
-Om de demo als console app uit te voeren, kan je deze arguments gebruiken:
+Om de demo als console app op te starten, kan je deze arguments gebruiken:
 ```shell
 ./gradlew run --console=plain --args="--console --shutdown=/stop"
 ```
