@@ -1,7 +1,9 @@
 package framework.setup.helper.reflection;
 
 import framework.context.QuickLinkContext;
-import framework.exceptions.internal.InternalAnnotationException;
+import framework.setup.model.reflection.annotated_class.InjectableClass;
+import framework.setup.model.reflection.annotation.AnnotationSet;
+import framework.setup.model.reflection.annotation.AnnotationType;
 import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
@@ -12,44 +14,21 @@ public class AnnotationReflectionHelper {
 
     private AnnotationReflectionHelper() {}
 
-    public static Map<Class<?>, Class<? extends Annotation>> getTypesAnnotatedWithDirectSubtypes(QuickLinkContext context, Class<? extends Annotation> baseAnnotation) {
+    public static Set<InjectableClass<?>> getTypesAnnotatedWith(QuickLinkContext context, AnnotationSet annotationSet) {
         Reflections projectReflections = context.getReflectionContext().getProjectReflections();
-        var subAnnotations = getSubAnnotations(context, baseAnnotation, true);
-        return subAnnotations.stream()
-                .map(
-                        a->projectReflections.getTypesAnnotatedWith(a)
-                                .stream()
-                                .collect(Collectors.<Class<?>, Class<?>, Class<? extends Annotation>>toMap(t->t, t->a))
-                )
-                .reduce(new HashMap<>(), (s1, s2)->{
-                    s1.putAll(s2);
+        return annotationSet.annotations().stream()
+                .map(AnnotationType::annotation)
+                .map(a-> toInjectableClassSet(a, projectReflections))
+                .reduce(new HashSet<>(), (s1, s2)->{
+                    s1.addAll(s2);
                     return s1;
                 });
     }
 
-    public static Set<Class<? extends Annotation>> getSubAnnotations(QuickLinkContext context, Class<? extends Annotation> baseAnnotation, boolean addBaseAnnotation) {
-        Reflections annotationReflections = context.getReflectionContext().getAnnotationReflections();
-
-        Set<Class<? extends Annotation>> subAnnotations = annotationReflections
-                .getTypesAnnotatedWith(baseAnnotation)
+    private static Set<InjectableClass<?>> toInjectableClassSet(Class<? extends Annotation> annotation, Reflections reflections) {
+        return reflections.getTypesAnnotatedWith(annotation)
                 .stream()
-                .filter(Class::isAnnotation)
-                .map(AnnotationReflectionHelper::verifyAnnotation)
+                .map(type ->  (InjectableClass<?>) new InjectableClass<>(type, new AnnotationType(annotation)))
                 .collect(Collectors.toSet());
-
-        if(addBaseAnnotation)
-            subAnnotations.add(baseAnnotation);
-
-        return subAnnotations;
-    }
-
-    private static Class<? extends Annotation> verifyAnnotation(Class<?> annotation) {
-        if(annotation == null){
-            throw InternalAnnotationException.nullAnnotation();
-        }
-        if(annotation.isAnnotation()){
-            return annotation.asSubclass(Annotation.class);
-        }
-        throw InternalAnnotationException.expectedAnnotation(annotation);
     }
 }

@@ -1,3 +1,5 @@
+package tests;
+
 import framework.context.QuickLinkContext;
 import framework.setup.ControllerMapper;
 import framework.setup.InjectableFactory;

@@ -3,15 +3,22 @@ package framework.setup;
 import framework.annotations.Injectable;
 import framework.annotations.injection.config.Bean;
 import framework.annotations.injection.config.Config;
+import framework.annotations.injection.semantic.Repository;
+import framework.annotations.injection.semantic.Service;
+import framework.annotations.injection.semantic.Controller;
 import framework.annotations.interception.Timed;
 import framework.configurables.conversions.impl.DefaultConfigurationMappings;
 import framework.context.QuickLinkContext;
 import framework.context.config.LogFormatter;
 import framework.exceptions.componentscan.DuplicateException;
 import framework.exceptions.internal.MapMethodObjectInternalError;
-import framework.setup.model.Component;
-import org.reflections.Reflections;
 import framework.setup.helper.reflection.AnnotationReflectionHelper;
+import framework.setup.model.Component;
+import framework.setup.model.reflection.annotated_class.InjectableClass;
+import framework.setup.model.reflection.annotated_class.InjectableClassWithTimedMethods;
+import framework.setup.model.reflection.annotation.AnnotationSet;
+import framework.setup.model.reflection.annotation.AnnotationType;
+import org.reflections.Reflections;
 import framework.setup.helper.AccessibilityHelper;
 import framework.setup.helper.constructor.ConfigConstructorHelper;
 import framework.setup.helper.constructor.InjectableConstructorFinder;
@@ -27,14 +34,27 @@ import java.util.stream.Collectors;
 public class ComponentScanner {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentScanner.class);
 
+    private static final Set<Class<? extends Annotation>> INJECTABLE_TYPES = Set.of(
+            Injectable.class,
+            Repository.class,
+            Service.class,
+            Controller.class
+    );
+
+    private static final AnnotationSet ANNOTATION_SET = new AnnotationSet(
+            INJECTABLE_TYPES.stream()
+            .map(AnnotationType::new)
+            .collect(Collectors.toSet()));
+
     private ComponentScanner() {}
 
     public static void scanComponentsAndInterceptables(QuickLinkContext context) {
-        var injectables = AnnotationReflectionHelper.getTypesAnnotatedWithDirectSubtypes(context, Injectable.class).keySet();
-        var timedMethods = mapTimedMethods(injectables);
+        var injectables = AnnotationReflectionHelper.getTypesAnnotatedWith(context, ANNOTATION_SET);
         LogFormatter logFormatter = context.getLogFormatter();
 
+        var timedMethods = mapTimedMethods(injectables);
         logTimedMethodScanCompleteMessage(logFormatter, timedMethods);
+        context.getCache().setTimedMethods(timedMethods);
 
         List<Component> components = new ArrayList<>();
         components.addAll(scanBeanComponents(context));
@@ -44,19 +64,21 @@ public class ComponentScanner {
 
         Set<Component> componentSet = new LinkedHashSet<>(components);
         context.getCache().setComponents(componentSet);
-        context.getCache().setTimedMethods(timedMethods);
 
         logComponentScanCompleteMessage(logFormatter, componentSet);
     }
 
-    private static void logTimedMethodScanCompleteMessage(LogFormatter logFormatter, Map<Class<?>, List<Method>> timedMethods) {
+    private static void logTimedMethodScanCompleteMessage(
+            LogFormatter logFormatter,
+            List<InjectableClassWithTimedMethods<?>> timedMethods
+    ) {
         if (!LOGGER.isDebugEnabled()) return;
 
         String timedMethodScanCompleteMessage = logFormatter.highlight("Timed method scanning complete. Entries are: \n{}");
 
-        LOGGER.debug(timedMethodScanCompleteMessage, timedMethods.entrySet().stream()
-                .map(timedClassWithMethodList -> String.format("| -> %-100s |%n%s", timedClassWithMethodList.getKey().toString(),
-                        timedClassWithMethodList.getValue().stream()
+        LOGGER.debug(timedMethodScanCompleteMessage, timedMethods.stream()
+                .map(injectable -> String.format("| -> %-100s |%n%s", injectable.classType().toString(),
+                        injectable.timedMethods().stream()
                                 .map(method -> String.format("|        %-96s |", method.toString()))
                                 .collect(Collectors.joining("\n"))))
                 .collect(Collectors.joining("\n")));
@@ -125,8 +147,8 @@ public class ComponentScanner {
                 .collect(Collectors.toUnmodifiableMap(Component::getType, Component::getInstance));
     }
 
-    private static List<Component> toEmptyComponents(Set<Class<?>> types) {
-        return types
+    private static List<Component> toEmptyComponents(Set<InjectableClass<?>> injectableClasses) {
+        return injectableClasses
                 .stream()
                 .map(InjectableConstructorFinder::tryGetConstructor)
                 .map(AccessibilityHelper::trySetConstructorAccessible)
@@ -143,14 +165,25 @@ public class ComponentScanner {
                 });
     }
 
-    private static Map<Class<?>, List<Method>> mapTimedMethods(Collection<Class<?>> classList){
-        return classList.stream()
-                .collect(Collectors.toUnmodifiableMap(type->type, type -> getMethodsWithAnnotation(type, Timed.class)))
-                .entrySet()
+    private static List<InjectableClassWithTimedMethods<?>> mapTimedMethods(Collection<InjectableClass<?>> classList) {
+        return classList
                 .stream()
-                .filter(entry-> !entry.getValue().isEmpty())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .<InjectableClassWithTimedMethods<?>> map(ComponentScanner::addTimedMethods)
+                .filter(injectable -> !injectable.timedMethods().isEmpty())
+                .toList();
     }
+
+    private static <T> InjectableClassWithTimedMethods<T> addTimedMethods(InjectableClass<T> injectableClass) {
+        Class<T> type = injectableClass.classType();
+        Set<Method> methods = new HashSet<>(getMethodsWithAnnotation(type, Timed.class));
+        return new InjectableClassWithTimedMethods<>(
+                type,
+                injectableClass.annotationType(),
+                methods
+        );
+    }
+
+
 
     private static List<Method> getMethodsWithAnnotation(Class<?> type, Class<? extends Annotation> annotationType) {
         return Arrays.stream(type.getDeclaredMethods())

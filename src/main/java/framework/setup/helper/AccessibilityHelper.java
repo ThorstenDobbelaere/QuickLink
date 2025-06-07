@@ -6,6 +6,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 public class AccessibilityHelper {
+    private AccessibilityHelper() {}
+
     public static Method trySetMethodAccessible(Method method) {
         try {
             method.setAccessible(true);
@@ -15,7 +17,7 @@ public class AccessibilityHelper {
         }
     }
 
-    public static Constructor<?> trySetConstructorAccessible(Constructor<?> constructor) {
+    public static <T> Constructor<T> trySetConstructorAccessible(Constructor<T> constructor) {
         try {
             constructor.setAccessible(true);
             return constructor;
