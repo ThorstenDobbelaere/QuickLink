@@ -16,10 +16,12 @@ import java.util.stream.Collectors;
 public class ControllerMethodMapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ControllerMethodMapper.class);
 
+    private ControllerMethodMapper() {}
+
     public static void mapHandlersForRequests(QuickLinkContext context) {
         var cache = context.getCache();
         var controllers = cache.getMappedControllers();
-        var mappedMethods = ControllerMethodMapperHelper.getMappedMethodsForControllers(context, controllers);
+        var mappedMethods = ControllerMethodMapperHelper.getMappedMethodsForControllers(controllers);
         var requestHandlers = mappedMethods.stream()
                 .map(mappedControllerMethod -> HandlerFactory.createHandlerForMethod(context, mappedControllerMethod))
                 .toList();
