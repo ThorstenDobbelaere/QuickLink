@@ -1,3 +1,5 @@
+package tests;
+
 import testprojects.ambiguityproject.AmbiguityProjectMain;
 import testprojects.emptymappingproject.EmptyMappingProjectMain;
 import framework.context.QuickLinkContext;

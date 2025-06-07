@@ -1,3 +1,5 @@
+package tests;
+
 import framework.context.QuickLinkContext;
 import framework.setup.ComponentScanner;
 import framework.setup.model.Component;
@@ -11,7 +13,7 @@ import testprojects.testproject.service.PetNameService;
 
 import java.util.Optional;
 
-public class ComponentScanningTest {
+class ComponentScanningTest {
 
     private static Optional<Component> getOptionalComponent(Class<?> type, QuickLinkContext context) {
         return context.getCache()
@@ -22,7 +24,7 @@ public class ComponentScanningTest {
     }
 
     @Test
-    public void testControllerScan() {
+    void testControllerScan() {
         // Given the component scanning of a project is finished
         QuickLinkContext context = new QuickLinkContext(DummyProjectMain.class);
         ComponentScanner.scanComponentsAndInterceptables(context);
@@ -48,7 +50,7 @@ public class ComponentScanningTest {
         Assertions.assertTrue(componentScanTestComponent.isEmpty());
 
         // And i find the correct number of timed methods.
-        Assertions.assertEquals(2, context.getCache().getTimedMethods().entrySet().size());
+        Assertions.assertEquals(2, context.getCache().getTimedMethods().size());
     }
 
 

@@ -1,3 +1,5 @@
+package tests;
+
 import framework.context.QuickLinkContext;
 import framework.request.response.HttpResponse;
 import framework.request.response.HttpStatus;

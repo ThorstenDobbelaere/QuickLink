@@ -1,3 +1,5 @@
+package tests;
+
 import demo.DemoProject;
 import framework.context.QuickLinkContext;
 import framework.setup.*;

@@ -1,3 +1,5 @@
+package tests;
+
 import testprojects.cyclicalproject.CyclicalProjectMain;
 import testprojects.cyclicalproject.service.CyclicalService1;
 import testprojects.cyclicalproject.service.CyclicalService2;
