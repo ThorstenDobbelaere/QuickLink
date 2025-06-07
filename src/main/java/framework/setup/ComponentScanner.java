@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 public class ComponentScanner {
@@ -111,14 +112,16 @@ public class ComponentScanner {
     }
 
     private static Map<Class<?>, Object> createObjectMapUsingDefaultConstructor(Set<Class<?>> classesToMap) {
+        UnaryOperator<Component> instantiateWithDefaultConstructor = component -> {
+            component.create();
+            return component;
+        };
+
         return classesToMap.stream()
                 .map(ConfigConstructorHelper::tryFindDefaultConstructor)
                 .map(AccessibilityHelper::trySetConstructorAccessible)
                 .map(Component::forConstructor)
-                .map(component -> {
-                    component.create();
-                    return component;
-                })
+                .map(instantiateWithDefaultConstructor)
                 .collect(Collectors.toUnmodifiableMap(Component::getType, Component::getInstance));
     }
 
