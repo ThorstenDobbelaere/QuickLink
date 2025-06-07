@@ -17,11 +17,12 @@ import testprojects.testproject.repo.AgeRepository;
 import testprojects.testproject.repo.PetNameRepository;
 import testprojects.testproject.service.PetNameService;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class InjectionAndUrlMappingTest {
+class InjectionAndUrlMappingTest {
 
     private QuickLinkContext setupContext() throws NoSuchMethodException {
         QuickLinkContext context = new QuickLinkContext(DummyProjectMain.class);
@@ -44,14 +45,14 @@ public class InjectionAndUrlMappingTest {
     }
 
     @Test
-    public void testBeanAndComponentMapping() throws NoSuchMethodException {
+    void testBeanAndComponentMapping() throws NoSuchMethodException {
         // Given a context for the test project
         var context = setupContext();
 
         // When i instantiate the classes and map the controllers
         InjectableFactory.instantiateSingletons(context);
         ControllerMapper.mapControllersToUrls(context);
-        Set<Component> generatedComponents = context.getCache().getComponents();
+        Collection<Component> generatedComponents = context.getCache().getComponents();
         Set<MappedController> mappedControllers = context.getCache().getMappedControllers();
 
         // Then there's a DummyController component

@@ -11,21 +11,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.Set;
+import java.util.Collection;
 
 public class GraphChecker {
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphChecker.class);
 
+    private GraphChecker() {}
+
     public static void checkCycles(QuickLinkContext context) {
         Graph<Class<?>, DefaultEdge> graph = new SimpleDirectedGraph<>(DefaultEdge.class);
         var cache = context.getCache();
-        Set<Component> components = cache.getComponents();
+        Collection<Component> components = cache.getComponents();
 
         components.forEach(component -> graph.addVertex(component.getType()));
 
-        components.forEach(component -> Arrays.stream(component.getDependencies()).forEach(dependency -> {
-            graph.addEdge(component.getType(), dependency);
-        }));
+        components.forEach(component -> Arrays.stream(component.getDependencies())
+                .forEach(dependency ->
+                        graph.addEdge(component.getType(), dependency)
+                ));
 
         var cycleDetector = new CycleDetector<>(graph);
         if(cycleDetector.detectCycles()){

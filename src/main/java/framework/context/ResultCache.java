@@ -5,12 +5,13 @@ import framework.setup.model.MappedController;
 import framework.request.handlers.MappedRequestHandler;
 import framework.setup.model.reflection.annotated_class.InjectableClassWithTimedMethods;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class ResultCache {
-    private Set<Component> components;
+    private Collection<Component> components;
     private List<InjectableClassWithTimedMethods<?>> timedMethods;
 
     private Map<Component, Object> componentObjectMap;
@@ -19,11 +20,11 @@ public class ResultCache {
 
     ResultCache(){}
 
-    public Set<Component> getComponents() {
+    public Collection<Component> getComponents() {
         return components;
     }
 
-    public void setComponents(Set<Component> components) {
+    public void setComponents(Collection<Component> components) {
         this.components = components;
     }
 

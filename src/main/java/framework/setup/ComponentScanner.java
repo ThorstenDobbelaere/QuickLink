@@ -56,16 +56,14 @@ public class ComponentScanner {
         logTimedMethodScanCompleteMessage(logFormatter, timedMethods);
         context.getCache().setTimedMethods(timedMethods);
 
-        List<Component> components = new ArrayList<>();
+        Collection<Component> components = new LinkedHashSet<>();
         components.addAll(scanBeanComponents(context));
         components.addAll(toEmptyComponents(injectables));
         applyDefaultConfigurations(components);
         checkForDuplicates(components);
+        context.getCache().setComponents(components);
 
-        Set<Component> componentSet = new LinkedHashSet<>(components);
-        context.getCache().setComponents(componentSet);
-
-        logComponentScanCompleteMessage(logFormatter, componentSet);
+        logComponentScanCompleteMessage(logFormatter, components);
     }
 
     private static void logTimedMethodScanCompleteMessage(
@@ -84,12 +82,12 @@ public class ComponentScanner {
                 .collect(Collectors.joining("\n")));
     }
 
-    private static void logComponentScanCompleteMessage(LogFormatter logFormatter, Set<Component> componentSet) {
+    private static void logComponentScanCompleteMessage(LogFormatter logFormatter, Collection<Component> components) {
         if (!LOGGER.isDebugEnabled()) return;
 
         String componentScanCompleteMessage = logFormatter.highlight("Component scanning complete. Entries are: \n{}");
 
-        LOGGER.debug(componentScanCompleteMessage, componentSet.stream()
+        LOGGER.debug(componentScanCompleteMessage, components.stream()
                 .map(component -> String.format("| - %-100s |", component.getType()))
                 .collect(Collectors.joining("\n")));
 
@@ -106,7 +104,7 @@ public class ComponentScanner {
                 .toList();
     }
 
-    private static void checkForDuplicates(List<Component> components) {
+    private static void checkForDuplicates(Collection<Component> components) {
         List<Component> duplicateComponents = components.stream()
                 .filter(entry1->components.stream()
                         .filter(entry2-> entry1.getType().equals(entry2.getType())
@@ -119,7 +117,7 @@ public class ComponentScanner {
         }
     }
 
-    private static void applyDefaultConfigurations(List<Component> components) {
+    private static void applyDefaultConfigurations(Collection<Component> components) {
         DefaultConfigurationMappings defaultConfigurationMappings = new DefaultConfigurationMappings();
         List<Component> defaultComponents = Arrays.stream(DefaultConfigurationMappings.class
                         .getDeclaredMethods())

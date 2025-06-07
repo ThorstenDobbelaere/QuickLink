@@ -7,16 +7,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class InjectableFactory {
+    private InjectableFactory() {}
+
     private static final Logger LOGGER = LoggerFactory.getLogger(InjectableFactory.class);
 
     public static void instantiateSingletons(QuickLinkContext context) {
         var cache = context.getCache();
-        Set<Component> components = cache.getComponents();
+        Collection<Component> components = cache.getComponents();
 
         Map<Class<?>, Component> typeToComponentMap = components.stream()
                 .collect(Collectors.toUnmodifiableMap(Component::getType, entry -> entry));
@@ -27,13 +29,17 @@ public class InjectableFactory {
                         component -> resolve(component.getType(), typeToComponentMap)
                 ));
 
+        logObjectMappings(context, componentObjectMap);
+
+        cache.setComponentObjectMap(componentObjectMap);
+    }
+
+    private static void logObjectMappings(QuickLinkContext context, Map<Component, Object> componentObjectMap) {
+        if (!LOGGER.isDebugEnabled()) return;
         String objectMessage = context.getLogFormatter().highlight("Class -> object mapping complete. Mappings are: \n{}");
         LOGGER.debug(objectMessage, componentObjectMap.entrySet().stream()
                 .map(entry->String.format("| - %-60s ->    %-80s |", entry.getKey().getType(), entry.getValue()))
                 .collect(Collectors.joining("\n")));
-
-        cache.setComponentObjectMap(componentObjectMap);
-
     }
 
     private static Object resolve(Class<?> type, Map<Class<?>, Component> typeToComponentMap) {
@@ -57,6 +63,11 @@ public class InjectableFactory {
                         t->resolve(t, typeToComponentMap)
                 ).toList().toArray();
         instantiateComponent(component, dependencyObjects);
+        logComponentResolved(component, type);
+    }
+
+    private static void logComponentResolved(Component component, Class<?> type) {
+        if (!LOGGER.isDebugEnabled()) return;
         LOGGER.trace("Resolved {}", String.format("%-45s to %-45s", component, type));
     }
 

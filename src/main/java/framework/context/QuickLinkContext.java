@@ -9,8 +9,8 @@ import framework.setup.model.Component;
 import org.reflections.Reflections;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 
 public class QuickLinkContext {
     private final ResultCache cache;
@@ -33,13 +33,11 @@ public class QuickLinkContext {
     public QuickLinkContext(Class<?> root, QuickLinkContextConfiguration config) {
         this(root);
 
-        LogFormatter logFormatter = config.getLogFormatter();
-        if(logFormatter != null)
-            this.logFormatter = logFormatter;
+        if(config.getLogFormatter() != null)
+            this.logFormatter = config.getLogFormatter();
 
-        ListenerConfiguration listenerConfiguration = config.getListenerConfiguration();
-        if(listenerConfiguration != null)
-            this.listenerConfiguration = listenerConfiguration;
+        if(config.getListenerConfiguration() != null)
+            this.listenerConfiguration = config.getListenerConfiguration();
 
         this.runMode = config.getRunMode();
     }
@@ -58,9 +56,9 @@ public class QuickLinkContext {
 
     public long getChrono() {
         Instant now = Instant.now();
-        Instant lastTime = this.lastTime;
+        Instant lastInstant = this.lastTime;
         this.lastTime = now;
-        return now.toEpochMilli() - lastTime.toEpochMilli();
+        return now.toEpochMilli() - lastInstant.toEpochMilli();
     }
 
     public ResultCache getCache() {
@@ -68,7 +66,7 @@ public class QuickLinkContext {
     }
 
     public <T> T getInstanceOfType(Class<T> type) {
-        Set<Component> components = cache.getComponents();
+        Collection<Component> components = cache.getComponents();
         Optional<Component> optionalComponent = components.stream().filter(c -> c.getType().equals(type)).findFirst();
         if(optionalComponent.isEmpty()) throw new NoSuchComponentException(type);
         Object result = optionalComponent.get().getInstance();
