@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 public class AnnotationReflectionHelper {
 
+    private AnnotationReflectionHelper() {}
+
     public static Map<Class<?>, Class<? extends Annotation>> getTypesAnnotatedWithDirectSubtypes(QuickLinkContext context, Class<? extends Annotation> baseAnnotation) {
         Reflections projectReflections = context.getReflectionContext().getProjectReflections();
         var subAnnotations = getSubAnnotations(context, baseAnnotation, true);

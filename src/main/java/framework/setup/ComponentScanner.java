@@ -6,6 +6,7 @@ import framework.annotations.injection.config.Config;
 import framework.annotations.interception.Timed;
 import framework.configurables.conversions.impl.DefaultConfigurationMappings;
 import framework.context.QuickLinkContext;
+import framework.context.config.LogFormatter;
 import framework.exceptions.componentscan.DuplicateException;
 import framework.exceptions.internal.MapMethodObjectInternalError;
 import framework.setup.model.Component;
@@ -25,17 +26,14 @@ import java.util.stream.Collectors;
 public class ComponentScanner {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentScanner.class);
 
+    private ComponentScanner() {}
+
     public static void scanComponentsAndInterceptables(QuickLinkContext context) {
         var injectables = AnnotationReflectionHelper.getTypesAnnotatedWithDirectSubtypes(context, Injectable.class).keySet();
         var timedMethods = mapTimedMethods(injectables);
+        LogFormatter logFormatter = context.getLogFormatter();
 
-        String timedMethodScanCompleteMessage = context.getLogFormatter().highlight("Timed method scanning complete. Entries are: \n{}");
-        LOGGER.debug(timedMethodScanCompleteMessage, timedMethods.entrySet().stream()
-                .map(timedClassWithMethodList -> String.format("| -> %-100s |\n%s", timedClassWithMethodList.getKey().toString(),
-                        timedClassWithMethodList.getValue().stream()
-                                .map(method -> String.format("|        %-96s |", method.toString()))
-                                .collect(Collectors.joining("\n"))))
-                .collect(Collectors.joining("\n")));
+        logTimedMethodScanCompleteMessage(logFormatter, timedMethods);
 
         List<Component> components = new ArrayList<>();
         components.addAll(scanBeanComponents(context));
@@ -47,11 +45,30 @@ public class ComponentScanner {
         context.getCache().setComponents(componentSet);
         context.getCache().setTimedMethods(timedMethods);
 
-        String componentScanCompleteMessage = context.getLogFormatter().highlight("Component scanning complete. Entries are: \n{}");
+        logComponentScanCompleteMessage(logFormatter, componentSet);
+    }
+
+    private static void logTimedMethodScanCompleteMessage(LogFormatter logFormatter, Map<Class<?>, List<Method>> timedMethods) {
+        if (!LOGGER.isDebugEnabled()) return;
+
+        String timedMethodScanCompleteMessage = logFormatter.highlight("Timed method scanning complete. Entries are: \n{}");
+
+        LOGGER.debug(timedMethodScanCompleteMessage, timedMethods.entrySet().stream()
+                .map(timedClassWithMethodList -> String.format("| -> %-100s |%n%s", timedClassWithMethodList.getKey().toString(),
+                        timedClassWithMethodList.getValue().stream()
+                                .map(method -> String.format("|        %-96s |", method.toString()))
+                                .collect(Collectors.joining("\n"))))
+                .collect(Collectors.joining("\n")));
+    }
+
+    private static void logComponentScanCompleteMessage(LogFormatter logFormatter, Set<Component> componentSet) {
+        if (!LOGGER.isDebugEnabled()) return;
+
+        String componentScanCompleteMessage = logFormatter.highlight("Component scanning complete. Entries are: \n{}");
+
         LOGGER.debug(componentScanCompleteMessage, componentSet.stream()
                 .map(component -> String.format("| - %-100s |", component.getType()))
                 .collect(Collectors.joining("\n")));
-
 
     }
 
@@ -98,7 +115,10 @@ public class ComponentScanner {
                 .map(ConfigConstructorHelper::tryFindDefaultConstructor)
                 .map(AccessibilityHelper::trySetConstructorAccessible)
                 .map(Component::forConstructor)
-                .peek(Component::create)
+                .map(component -> {
+                    component.create();
+                    return component;
+                })
                 .collect(Collectors.toUnmodifiableMap(Component::getType, Component::getInstance));
     }
 
