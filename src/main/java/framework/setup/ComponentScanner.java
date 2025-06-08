@@ -1,23 +1,19 @@
 package framework.setup;
 
-import framework.annotations.Injectable;
 import framework.annotations.injection.config.Bean;
 import framework.annotations.injection.config.Config;
-import framework.annotations.injection.semantic.Repository;
-import framework.annotations.injection.semantic.Service;
-import framework.annotations.injection.semantic.Controller;
 import framework.annotations.interception.Timed;
 import framework.configurables.conversions.impl.DefaultConfigurationMappings;
 import framework.context.QuickLinkContext;
 import framework.context.config.LogFormatter;
 import framework.exceptions.componentscan.DuplicateException;
 import framework.exceptions.internal.MapMethodObjectInternalError;
-import framework.setup.helper.reflection.AnnotationReflectionHelper;
 import framework.setup.model.Component;
-import framework.setup.model.reflection.annotated_class.InjectableClass;
-import framework.setup.model.reflection.annotated_class.InjectableClassWithTimedMethods;
+import framework.setup.model.reflection.annotated_entities.InjectableClass;
+import framework.setup.model.reflection.annotated_entities.InjectableClassWithTimedMethods;
 import framework.setup.model.reflection.annotation.AnnotationSet;
-import framework.setup.model.reflection.annotation.AnnotationType;
+import framework.setup.strategies.DefaultStrategies;
+import framework.setup.strategies.contracts.ComponentScanStrategy;
 import org.reflections.Reflections;
 import framework.setup.helper.AccessibilityHelper;
 import framework.setup.helper.constructor.ConfigConstructorHelper;
@@ -25,7 +21,6 @@ import framework.setup.helper.constructor.InjectableConstructorFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.UnaryOperator;
@@ -34,31 +29,24 @@ import java.util.stream.Collectors;
 public class ComponentScanner {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentScanner.class);
 
-    private static final Set<Class<? extends Annotation>> INJECTABLE_TYPES = Set.of(
-            Injectable.class,
-            Repository.class,
-            Service.class,
-            Controller.class
-    );
 
-    private static final AnnotationSet ANNOTATION_SET = new AnnotationSet(
-            INJECTABLE_TYPES.stream()
-            .map(AnnotationType::new)
-            .collect(Collectors.toSet()));
 
     private ComponentScanner() {}
 
     public static void scanComponentsAndInterceptables(QuickLinkContext context) {
-        var injectables = AnnotationReflectionHelper.getTypesAnnotatedWith(context, ANNOTATION_SET);
+        var projectReflections = context.getReflectionContext().getProjectReflections();
+        var componentScanStrategy = DefaultStrategies.componentScanStrategy(projectReflections);
+        var injectableScanStrategy = DefaultStrategies.injectableScanStrategy(componentScanStrategy);
+        Collection<InjectableClass<?>> injectableClasses = injectableScanStrategy.scanInjectableClasses();
         LogFormatter logFormatter = context.getLogFormatter();
 
-        var timedMethods = mapTimedMethods(injectables);
+        var timedMethods = mapTimedMethods(injectableClasses, componentScanStrategy);
         logTimedMethodScanCompleteMessage(logFormatter, timedMethods);
         context.getCache().setTimedMethods(timedMethods);
 
         Collection<Component> components = new LinkedHashSet<>();
         components.addAll(scanBeanComponents(context));
-        components.addAll(toEmptyComponents(injectables));
+        components.addAll(toEmptyComponents(injectableClasses));
         applyDefaultConfigurations(components);
         checkForDuplicates(components);
         context.getCache().setComponents(components);
@@ -76,7 +64,7 @@ public class ComponentScanner {
 
         LOGGER.debug(timedMethodScanCompleteMessage, timedMethods.stream()
                 .map(injectable -> String.format("| -> %-100s |%n%s", injectable.classType().toString(),
-                        injectable.timedMethods().stream()
+                        injectable.annotatedMethods().stream()
                                 .map(method -> String.format("|        %-96s |", method.toString()))
                                 .collect(Collectors.joining("\n"))))
                 .collect(Collectors.joining("\n")));
@@ -145,7 +133,7 @@ public class ComponentScanner {
                 .collect(Collectors.toUnmodifiableMap(Component::getType, Component::getInstance));
     }
 
-    private static List<Component> toEmptyComponents(Set<InjectableClass<?>> injectableClasses) {
+    private static List<Component> toEmptyComponents(Collection<InjectableClass<?>> injectableClasses) {
         return injectableClasses
                 .stream()
                 .map(InjectableConstructorFinder::tryGetConstructor)
@@ -156,36 +144,30 @@ public class ComponentScanner {
 
     private static List<Method> findBeansForClasses(Collection<Class<?>> classList) {
         return classList.stream()
-                .map(type -> getMethodsWithAnnotation(type, Bean.class))
+                .map(ComponentScanner::getMethodsWithAnnotation)
                 .reduce(new LinkedList<>(), (l1, l2)->{
                     l1.addAll(l2);
                     return l1;
                 });
     }
 
-    private static List<InjectableClassWithTimedMethods<?>> mapTimedMethods(Collection<InjectableClass<?>> classList) {
+    private static List<InjectableClassWithTimedMethods<?>> mapTimedMethods(Collection<InjectableClass<?>> classList, ComponentScanStrategy componentScanStrategy) {
         return classList
                 .stream()
-                .<InjectableClassWithTimedMethods<?>> map(ComponentScanner::addTimedMethods)
-                .filter(injectable -> !injectable.timedMethods().isEmpty())
+                .<InjectableClassWithTimedMethods<?>> map(i -> addTimedMethods(i, componentScanStrategy))
+                .filter(injectable -> !injectable.annotatedMethods().isEmpty())
                 .toList();
     }
 
-    private static <T> InjectableClassWithTimedMethods<T> addTimedMethods(InjectableClass<T> injectableClass) {
+    private static <T> InjectableClassWithTimedMethods<T> addTimedMethods(InjectableClass<T> injectableClass, ComponentScanStrategy componentScanStrategy) {
         Class<T> type = injectableClass.classType();
-        Set<Method> methods = new HashSet<>(getMethodsWithAnnotation(type, Timed.class));
-        return new InjectableClassWithTimedMethods<>(
-                type,
-                injectableClass.annotationType(),
-                methods
-        );
+        var methods = componentScanStrategy.getMethodsAnnotatedWith(type, new AnnotationSet(Set.of(Timed.class)));
+        return new InjectableClassWithTimedMethods<>(type, injectableClass.annotationType(), methods);
     }
 
-
-
-    private static List<Method> getMethodsWithAnnotation(Class<?> type, Class<? extends Annotation> annotationType) {
+    private static List<Method> getMethodsWithAnnotation(Class<?> type) {
         return Arrays.stream(type.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(annotationType))
+                .filter(method -> method.isAnnotationPresent(Bean.class))
                 .map(AccessibilityHelper::trySetMethodAccessible)
                 .toList();
     }

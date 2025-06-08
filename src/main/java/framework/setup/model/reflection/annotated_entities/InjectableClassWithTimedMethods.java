@@ -1,13 +1,12 @@
-package framework.setup.model.reflection.annotated_class;
+package framework.setup.model.reflection.annotated_entities;
 
 import framework.setup.model.reflection.annotation.AnnotationType;
 
-import java.lang.reflect.Method;
-import java.util.Set;
+import java.util.Collection;
 
 public record InjectableClassWithTimedMethods<T>(
         Class<T> classType,
         AnnotationType annotationType,
-        Set<Method> timedMethods
+        Collection<AnnotatedMethod> annotatedMethods
 ) {
 }

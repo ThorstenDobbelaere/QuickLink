@@ -2,7 +2,7 @@ package framework.setup.helper.constructor;
 
 import framework.exceptions.componentscan.ConstructorScanException;
 import framework.setup.helper.AccessibilityHelper;
-import framework.setup.model.reflection.annotated_class.InjectableClass;
+import framework.setup.model.reflection.annotated_entities.InjectableClass;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;

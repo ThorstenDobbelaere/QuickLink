@@ -3,7 +3,7 @@ package framework.context;
 import framework.setup.model.Component;
 import framework.setup.model.MappedController;
 import framework.request.handlers.MappedRequestHandler;
-import framework.setup.model.reflection.annotated_class.InjectableClassWithTimedMethods;
+import framework.setup.model.reflection.annotated_entities.InjectableClassWithTimedMethods;
 
 import java.util.Collection;
 import java.util.List;

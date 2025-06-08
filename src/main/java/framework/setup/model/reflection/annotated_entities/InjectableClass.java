@@ -1,4 +1,4 @@
-package framework.setup.model.reflection.annotated_class;
+package framework.setup.model.reflection.annotated_entities;
 
 import framework.setup.model.reflection.annotation.AnnotationType;
 

@@ -17,11 +17,6 @@ public class QuickLink {
         LOGGER.info("Finished {} in {} ms", description, context.getChrono());
     }
 
-    public static void run(Class<?> root){
-        QuickLinkContext context = new QuickLinkContext(root);
-        setup(context);
-    }
-
     public static void run(Class<?> root, QuickLinkContextConfiguration configuration){
         QuickLinkContext context = new QuickLinkContext(root, configuration);
         setup(context);
