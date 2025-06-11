@@ -5,6 +5,7 @@ import framework.context.config.QuickLinkContextConfiguration;
 import framework.request.listener.InputListener;
 import framework.request.listener.InputListenerFactory;
 import framework.setup.*;
+import framework.setup.strategies.DefaultStrategies;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -25,7 +26,10 @@ public class QuickLink {
     private static void setup(QuickLinkContext context) {
         printTimeStamp(context, "context setup");
 
-        ComponentScanner.scanComponentsAndInterceptables(context);
+        var componentScanStrategy = DefaultStrategies.componentScanStrategy(context.getPackageName());
+        var logFormatter = context.getLogFormatter();
+
+        ComponentScanner.scanComponentsAndInterceptables(componentScanStrategy, logFormatter);
         printTimeStamp(context, "component and intercept method scanning");
 
         GraphChecker.checkCycles(context);

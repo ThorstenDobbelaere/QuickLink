@@ -6,7 +6,6 @@ import framework.context.config.QuickLinkContextConfiguration;
 import framework.exceptions.internal.NoSuchComponentException;
 import framework.exceptions.internal.ComponentCastError;
 import framework.setup.model.Component;
-import org.reflections.Reflections;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -14,20 +13,22 @@ import java.util.Optional;
 
 public class QuickLinkContext {
     private final ResultCache cache;
-    private final ReflectionContext reflectionContext;
-    private Instant lastTime;
+    private final String packageName;
+
     private LogFormatter logFormatter = new LogFormatter();
     private ListenerConfiguration listenerConfiguration = new ListenerConfiguration();
     private RunMode runMode;
+    private Instant lastTime;
 
     public QuickLinkContext(Class<?> root) {
-        String packageName = root.getPackage().getName();
+        this.packageName = root.getPackage().getName();
         this.lastTime = Instant.now();
         cache = new ResultCache();
-        reflectionContext = new ReflectionContext();
-        Reflections reflections = new Reflections(packageName);
-        reflectionContext.setProjectReflections(reflections);
         runMode = RunMode.HTTP;
+    }
+
+    public String getPackageName() {
+        return packageName;
     }
 
     public QuickLinkContext(Class<?> root, QuickLinkContextConfiguration config) {
@@ -72,9 +73,5 @@ public class QuickLinkContext {
         Object result = optionalComponent.get().getInstance();
         if(type.isInstance(result)) return type.cast(result);
         throw new ComponentCastError("Unable to cast component from " + result.getClass() + " to " + type);
-    }
-
-    public ReflectionContext getReflectionContext() {
-        return reflectionContext;
     }
 }

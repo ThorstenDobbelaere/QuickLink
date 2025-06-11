@@ -72,6 +72,6 @@ public class InjectableFactory {
     }
 
     private static void instantiateComponent(Component component, Object[] dependencies){
-        component.create(dependencies);
+        component.instantiate(dependencies);
     }
 }

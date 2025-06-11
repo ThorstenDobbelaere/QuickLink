@@ -1,18 +1,22 @@
 package framework.setup.helper.constructor;
 
 import framework.exceptions.componentscan.ConstructorScanException;
+import framework.setup.model.reflection.annotated_entities.InjectableClass;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.List;
 
 public class ConfigConstructorHelper {
-    public static Constructor<?> tryFindDefaultConstructor(Class<?> componentClass) {
-        List<Constructor<?>> constructors = Arrays.stream(componentClass.getConstructors())
+    private ConfigConstructorHelper() {}
+
+    public static Constructor<?> tryFindDefaultConstructor(InjectableClass<?> componentClass) {
+        Class<?> type = componentClass.classType();
+        List<Constructor<?>> constructors = Arrays.stream(type.getConstructors())
                 .filter(BasicConstructorHelper::isAccessible)
                 .toList();
         if (constructors.isEmpty())
-            throw ConstructorScanException.noConstructor(componentClass);
+            throw ConstructorScanException.noConstructor(type);
 
         for (Constructor<?> constructor : constructors) {
             if(constructor.getParameterCount() == 0) {
@@ -20,6 +24,6 @@ public class ConfigConstructorHelper {
             }
         }
 
-        throw ConstructorScanException.configNoDefaultConstructor(componentClass);
+        throw ConstructorScanException.configNoDefaultConstructor(type);
     }
 }

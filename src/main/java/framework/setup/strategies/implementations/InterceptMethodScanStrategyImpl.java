@@ -1,0 +1,43 @@
+package framework.setup.strategies.implementations;
+
+import framework.setup.model.reflection.annotated_entities.InjectableClass;
+import framework.setup.model.reflection.annotated_entities.InjectableClassWithInterceptedMethods;
+import framework.setup.model.reflection.annotation.AnnotationSet;
+import framework.setup.strategies.DefaultStrategies;
+import framework.setup.strategies.contracts.ComponentScanStrategy;
+import framework.setup.strategies.contracts.InterceptMethodScanStrategy;
+
+import java.util.Collection;
+
+public class InterceptMethodScanStrategyImpl implements InterceptMethodScanStrategy {
+    private final ComponentScanStrategy componentScanStrategy;
+    private final AnnotationSet annotationsToScan;
+
+    public InterceptMethodScanStrategyImpl(ComponentScanStrategy componentScanStrategy, AnnotationSet annotationsToScan) {
+        this.componentScanStrategy = componentScanStrategy;
+        this.annotationsToScan = annotationsToScan;
+    }
+
+    @Override
+    public Collection<InjectableClassWithInterceptedMethods<?>> getInterceptedMethods() {
+        var injectableScanStrategy = DefaultStrategies.injectableScanStrategy();
+        Collection<InjectableClass<?>> injectableClasses = injectableScanStrategy.scanInjectableClasses();
+        return scanInterceptedMethods(injectableClasses);
+    }
+
+    private Collection<InjectableClassWithInterceptedMethods<?>> scanInterceptedMethods(Collection<InjectableClass<?>> classList) {
+        return classList
+                .stream()
+                .<InjectableClassWithInterceptedMethods<?>> map(this::scanInterceptedMethods)
+                .filter(injectable -> !injectable.annotatedMethods().isEmpty())
+                .toList();
+    }
+
+    private <T> InjectableClassWithInterceptedMethods<T> scanInterceptedMethods(InjectableClass<T> injectableClass) {
+        Class<T> type = injectableClass.classType();
+        var methods = this.componentScanStrategy.getMethodsAnnotatedWith(type, annotationsToScan);
+        return new InjectableClassWithInterceptedMethods<>(type, injectableClass.annotationType(), methods);
+    }
+
+
+}

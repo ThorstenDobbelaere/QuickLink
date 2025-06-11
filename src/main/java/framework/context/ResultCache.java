@@ -3,7 +3,7 @@ package framework.context;
 import framework.setup.model.Component;
 import framework.setup.model.MappedController;
 import framework.request.handlers.MappedRequestHandler;
-import framework.setup.model.reflection.annotated_entities.InjectableClassWithTimedMethods;
+import framework.setup.model.reflection.annotated_entities.InjectableClassWithInterceptedMethods;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class ResultCache {
     private Collection<Component> components;
-    private List<InjectableClassWithTimedMethods<?>> timedMethods;
+    private Collection<InjectableClassWithInterceptedMethods<?>> timedMethods;
 
     private Map<Component, Object> componentObjectMap;
     private Set<MappedController> mappedControllers;
@@ -52,11 +52,11 @@ public class ResultCache {
         this.mappedRequestHandlerList = mappedRequestHandlerList;
     }
 
-    public List<InjectableClassWithTimedMethods<?>> getTimedMethods() {
+    public Collection<InjectableClassWithInterceptedMethods<?>> getTimedMethods() {
         return timedMethods;
     }
 
-    public void setTimedMethods(List<InjectableClassWithTimedMethods<?>> timedMethods) {
+    public void setTimedMethods(Collection<InjectableClassWithInterceptedMethods<?>> timedMethods) {
         this.timedMethods = timedMethods;
     }
 }

@@ -4,7 +4,7 @@ import framework.setup.model.reflection.annotation.AnnotationType;
 
 import java.util.Collection;
 
-public record InjectableClassWithTimedMethods<T>(
+public record InjectableClassWithInterceptedMethods<T>(
         Class<T> classType,
         AnnotationType annotationType,
         Collection<AnnotatedMethod> annotatedMethods

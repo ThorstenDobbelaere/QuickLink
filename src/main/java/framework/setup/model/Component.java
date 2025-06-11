@@ -13,15 +13,15 @@ import java.util.Arrays;
 public class Component {
     private final Class<?> type;
     private final Class<?>[] dependencies;
-    private final Factory<?> supplier;
+    private final InstanceFactory<?> instanceFactory;
+    private final String controllerPath;
     private Object instance = null;
-    private String controllerPath;
 
     public Object getInstance(){
         return instance;
     }
 
-    public void create(Object... args) {
+    public synchronized void instantiate(Object... args) {
         if(args.length != dependencies.length) throw CreateObjectInternalError.wrongArgCount(type);
         for(int i = 0; i < dependencies.length; i++){
             if(!(dependencies[i].isInstance(args[i])))
@@ -29,7 +29,7 @@ public class Component {
         }
 
         try{
-            this.instance = supplier.create(args);
+            this.instance = instanceFactory.create(args);
         } catch (InvocationTargetException e) {
             throw CreateObjectInternalError.invocationException(type, e);
         } catch (InstantiationException e) {
@@ -52,29 +52,31 @@ public class Component {
         this(constructor::newInstance, constructor.getParameterTypes(), constructor.getDeclaringClass());
     }
 
-    private Component(Factory<?> supplier, Class<?>[] parameterTypes, Class<?> type){
+    private Component(InstanceFactory<?> instanceFactory, Class<?>[] parameterTypes, Class<?> type){
         this.type = type;
         this.dependencies = parameterTypes;
-        this.supplier = supplier;
+        this.instanceFactory = instanceFactory;
         if(this.type.isAnnotationPresent(Controller.class)){
             Controller controllerAnnotation = this.type.getAnnotation(Controller.class);
             controllerPath = controllerAnnotation.value();
+        } else {
+            controllerPath = null;
         }
     }
 
-    public static Component forConstructor(Constructor<?> constructor){
+    public static Component interceptionComponent(Constructor<?> constructor){
         Class<?> type = constructor.getDeclaringClass();
         if(Arrays.stream(type.getMethods()).anyMatch(method -> method.isAnnotationPresent(Timed.class))){
-            Factory<?> factory = (args) -> InterceptionHelper.instantiateAnnotationInterceptedComponent(type, constructor, args);
-            return new Component(factory, constructor.getParameterTypes(), type);
+            InstanceFactory<?> instanceFactory = args -> InterceptionHelper.instantiateAnnotationInterceptedComponent(type, constructor, args);
+            return new Component(instanceFactory, constructor.getParameterTypes(), type);
         }
         return new Component(constructor);
     }
 
-    public Component(Method method, Object instance){
-        this.type = method.getReturnType();
-        this.dependencies = method.getParameterTypes();
-        this.supplier = (Object... args)-> method.invoke(instance, args);
+    public Component(Method bean, Object configuration){
+        this.type = bean.getReturnType();
+        this.dependencies = bean.getParameterTypes();
+        this.instanceFactory = (Object... args) -> bean.invoke(configuration, args);
         this.controllerPath = null;
     }
 
