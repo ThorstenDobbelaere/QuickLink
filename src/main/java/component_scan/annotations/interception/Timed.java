@@ -1,4 +1,4 @@
-package framework.annotations.injection.config;
+package component_scan.annotations.interception;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,5 +7,4 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Bean {
-}
+public @interface Timed {}

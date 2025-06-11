@@ -1,10 +1,10 @@
 package framework.setup.strategies;
 
-import framework.annotations.Injectable;
-import framework.annotations.injection.semantic.Controller;
-import framework.annotations.injection.semantic.Repository;
-import framework.annotations.injection.semantic.Service;
-import framework.annotations.interception.Timed;
+import component_scan.annotations.Injectable;
+import component_scan.annotations.injection.semantic.Controller;
+import component_scan.annotations.injection.semantic.Repository;
+import component_scan.annotations.injection.semantic.Service;
+import component_scan.annotations.interception.Timed;
 import framework.setup.model.reflection.annotation.AnnotationSet;
 import framework.setup.strategies.contracts.ComponentScanStrategy;
 import framework.setup.strategies.contracts.InjectableScanStrategy;

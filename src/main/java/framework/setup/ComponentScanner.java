@@ -1,11 +1,10 @@
 package framework.setup;
 
-import framework.annotations.injection.config.Bean;
-import framework.annotations.injection.config.Config;
-import framework.annotations.interception.Timed;
+import component_scan.annotations.injection.config.Bean;
+import component_scan.annotations.injection.config.Config;
 import framework.configurables.conversions.impl.DefaultConfigurationMappings;
 import framework.context.config.LogFormatter;
-import framework.exceptions.componentscan.DuplicateException;
+import component_scan.exceptions.DuplicateException;
 import framework.exceptions.internal.MapMethodObjectInternalError;
 import framework.setup.model.Component;
 import framework.setup.model.reflection.annotated_entities.InjectableClass;
@@ -13,9 +12,8 @@ import framework.setup.model.reflection.annotated_entities.InjectableClassWithIn
 import framework.setup.model.reflection.annotation.AnnotationSet;
 import framework.setup.strategies.DefaultStrategies;
 import framework.setup.strategies.contracts.ComponentScanStrategy;
-import framework.setup.helper.AccessibilityHelper;
-import framework.setup.helper.constructor.ConfigConstructorHelper;
-import framework.setup.helper.constructor.InjectableConstructorFinder;
+import component_scan.helper.AccessibilityHelper;
+import component_scan.helper.ConstructorFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,15 +25,13 @@ import java.util.stream.Collectors;
 public class ComponentScanner {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentScanner.class);
 
-
-
     private ComponentScanner() {}
 
     public static void scanComponentsAndInterceptables(ComponentScanStrategy componentScanStrategy, LogFormatter logFormatter) {
         var injectableScanStrategy = DefaultStrategies.injectableScanStrategy();
         Collection<InjectableClass<?>> injectableClasses = injectableScanStrategy.scanInjectableClasses();
 
-        var timedMethods = mapTimedMethods(injectableClasses, componentScanStrategy);
+        var timedMethods = DefaultStrategies.interceptMethodScanStrategy().getInterceptedMethods();
         logTimedMethodScanCompleteMessage(logFormatter, timedMethods);
 
         Collection<Component> components = new LinkedHashSet<>();
@@ -49,7 +45,7 @@ public class ComponentScanner {
 
     private static void logTimedMethodScanCompleteMessage(
             LogFormatter logFormatter,
-            List<InjectableClassWithInterceptedMethods<?>> timedMethods
+            Collection<InjectableClassWithInterceptedMethods<?>> timedMethods
     ) {
         if (!LOGGER.isDebugEnabled()) return;
 
@@ -76,7 +72,7 @@ public class ComponentScanner {
 
     private static List<Component> scanBeanComponents(ComponentScanStrategy componentScanStrategy) {
         AnnotationSet annotationSet = new AnnotationSet(Set.of(Config.class));
-        var configObjects = createObjectMapUsingDefaultConstructor(componentScanStrategy.getClassesAnnotatedWith(annotationSet));
+        var configObjects = instantiateConfigurations(componentScanStrategy.getClassesAnnotatedWith(annotationSet));
 
         return findBeansForClasses(configObjects.keySet())
                 .stream()
@@ -111,16 +107,16 @@ public class ComponentScanner {
         components.addAll(defaultComponentsToAdd);
     }
 
-    private static Map<Class<?>, Object> createObjectMapUsingDefaultConstructor(Collection<InjectableClass<?>> classesToMap) {
+    private static Map<Class<?>, Object> instantiateConfigurations(Collection<InjectableClass<?>> classesToMap) {
         UnaryOperator<Component> instantiateWithDefaultConstructor = component -> {
             component.instantiate();
             return component;
         };
 
         return classesToMap.stream()
-                .map(ConfigConstructorHelper::tryFindDefaultConstructor)
+                .map(ConstructorFinder::findDefaultConstructor)
                 .map(AccessibilityHelper::trySetConstructorAccessible)
-                .map(Component::interceptionComponent)
+                .map(Component::fromConstructor)
                 .map(instantiateWithDefaultConstructor)
                 .collect(Collectors.toUnmodifiableMap(Component::getType, Component::getInstance));
     }
@@ -128,9 +124,9 @@ public class ComponentScanner {
     private static List<Component> toEmptyComponents(Collection<InjectableClass<?>> injectableClasses) {
         return injectableClasses
                 .stream()
-                .map(InjectableConstructorFinder::tryGetConstructor)
+                .map(ConstructorFinder::findPrimaryConstructor)
                 .map(AccessibilityHelper::trySetConstructorAccessible)
-                .map(Component::interceptionComponent)
+                .map(Component::fromConstructor)
                 .toList();
     }
 
@@ -141,20 +137,6 @@ public class ComponentScanner {
                     l1.addAll(l2);
                     return l1;
                 });
-    }
-
-    private static List<InjectableClassWithInterceptedMethods<?>> mapTimedMethods(Collection<InjectableClass<?>> classList, ComponentScanStrategy componentScanStrategy) {
-        return classList
-                .stream()
-                .<InjectableClassWithInterceptedMethods<?>> map(i -> addTimedMethods(i, componentScanStrategy))
-                .filter(injectable -> !injectable.annotatedMethods().isEmpty())
-                .toList();
-    }
-
-    private static <T> InjectableClassWithInterceptedMethods<T> addTimedMethods(InjectableClass<T> injectableClass, ComponentScanStrategy componentScanStrategy) {
-        Class<T> type = injectableClass.classType();
-        var methods = componentScanStrategy.getMethodsAnnotatedWith(type, new AnnotationSet(Set.of(Timed.class)));
-        return new InjectableClassWithInterceptedMethods<>(type, injectableClass.annotationType(), methods);
     }
 
     private static List<Method> getMethodsWithAnnotation(Class<?> type) {

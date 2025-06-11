@@ -1,7 +1,7 @@
 package testprojects.testproject.service;
 
-import framework.annotations.injection.semantic.Service;
-import framework.annotations.interception.Timed;
+import component_scan.annotations.injection.semantic.Service;
+import component_scan.annotations.interception.Timed;
 import testprojects.testproject.repo.PetNameRepository;
 
 @Service

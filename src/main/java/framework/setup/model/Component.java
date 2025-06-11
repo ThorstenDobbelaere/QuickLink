@@ -1,7 +1,7 @@
 package framework.setup.model;
 
-import framework.annotations.injection.semantic.Controller;
-import framework.annotations.interception.Timed;
+import component_scan.annotations.injection.semantic.Controller;
+import component_scan.annotations.interception.Timed;
 import framework.exceptions.internal.CreateObjectInternalError;
 import framework.setup.helper.InterceptionHelper;
 
@@ -64,7 +64,7 @@ public class Component {
         }
     }
 
-    public static Component interceptionComponent(Constructor<?> constructor){
+    public static Component fromConstructor(Constructor<?> constructor){
         Class<?> type = constructor.getDeclaringClass();
         if(Arrays.stream(type.getMethods()).anyMatch(method -> method.isAnnotationPresent(Timed.class))){
             InstanceFactory<?> instanceFactory = args -> InterceptionHelper.instantiateAnnotationInterceptedComponent(type, constructor, args);

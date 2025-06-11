@@ -1,11 +1,15 @@
 package framework.context.state;
 
+import framework.context.config.QuickLinkStrategies;
 import framework.setup.model.Component;
 import framework.setup.model.MappedController;
 import framework.request.handlers.MappedRequestHandler;
+import framework.setup.model.reflection.annotated_entities.InjectableClass;
 import framework.setup.model.reflection.annotated_entities.InjectableClassWithInterceptedMethods;
+import framework.setup.strategies.DefaultStrategies;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,5 +60,9 @@ public class ResultCache {
 
     public void setTimedMethods(Collection<InjectableClassWithInterceptedMethods<?>> timedMethods) {
         this.timedMethods = timedMethods;
+    }
+
+    public void applyComponentScan(QuickLinkStrategies strategies) {
+
     }
 }

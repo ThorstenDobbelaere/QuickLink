@@ -2,7 +2,7 @@ package demo.service;
 
 import demo.model.Resource;
 import demo.repository.ResourceRepository;
-import framework.annotations.injection.semantic.Service;
+import component_scan.annotations.injection.semantic.Service;
 
 import java.util.List;
 

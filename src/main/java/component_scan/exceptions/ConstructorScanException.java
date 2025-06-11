@@ -1,6 +1,6 @@
-package framework.exceptions.componentscan;
+package component_scan.exceptions;
 
-import framework.annotations.clarification.PrimaryConstructor;
+import component_scan.annotations.clarification.PrimaryConstructor;
 
 public class ConstructorScanException extends RuntimeException {
     private ConstructorScanException(String description) {

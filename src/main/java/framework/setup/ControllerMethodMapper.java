@@ -1,8 +1,8 @@
 package framework.setup;
 
 import framework.context.QuickLinkContext;
-import framework.exceptions.componentscan.DuplicateException;
-import framework.exceptions.componentscan.MappingException;
+import component_scan.exceptions.DuplicateException;
+import component_scan.exceptions.MappingException;
 import framework.request.handlers.MappedRequestHandler;
 import framework.request.handlers.factory.HandlerFactory;
 import framework.setup.helper.reflection.ControllerMethodMapperHelper;

@@ -1,11 +1,13 @@
-package framework.annotations;
+package component_scan.annotations.mapping;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Mapping
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Injectable {
+@Target(ElementType.METHOD)
+public @interface InputMapping {
+    String value() default "";
 }

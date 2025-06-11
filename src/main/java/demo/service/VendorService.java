@@ -2,8 +2,8 @@ package demo.service;
 
 import demo.model.Vendor;
 import demo.repository.VendorRepository;
-import framework.annotations.clarification.PrimaryConstructor;
-import framework.annotations.injection.semantic.Service;
+import component_scan.annotations.clarification.PrimaryConstructor;
+import component_scan.annotations.injection.semantic.Service;
 
 import java.util.List;
 

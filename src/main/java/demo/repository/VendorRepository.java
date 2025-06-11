@@ -1,7 +1,7 @@
 package demo.repository;
 
 import demo.model.Vendor;
-import framework.annotations.injection.semantic.Repository;
+import component_scan.annotations.injection.semantic.Repository;
 
 import java.util.ArrayList;
 import java.util.HashMap;

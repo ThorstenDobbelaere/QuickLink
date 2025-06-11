@@ -1,6 +1,6 @@
 package testprojects.testproject.repo;
 
-import framework.annotations.injection.semantic.Repository;
+import component_scan.annotations.injection.semantic.Repository;
 
 @Repository
 public class PetNameRepository {

@@ -1,7 +1,8 @@
 package framework.setup.helper;
 
-import framework.annotations.interception.Timed;
-import framework.exceptions.componentscan.AccessException;
+import component_scan.annotations.interception.Timed;
+import component_scan.exceptions.AccessException;
+import component_scan.helper.AccessibilityHelper;
 import framework.exceptions.internal.InternalException;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
@@ -50,8 +51,9 @@ public class InterceptionHelper {
 
         @Override
         public Object invoke(Object o, Method method, Method method1, Object[] objects) throws Throwable {
-            Instant start = Instant.now();
             AccessibilityHelper.trySetMethodAccessible(method);
+
+            Instant start = Instant.now();
             Object result = method.invoke(original, objects);
             Instant end = Instant.now();
             TIMED_LOGGER.info("Timed method {} took {} ms", method.getName(), end.toEpochMilli() - start.toEpochMilli());

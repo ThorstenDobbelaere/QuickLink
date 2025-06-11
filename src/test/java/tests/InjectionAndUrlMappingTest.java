@@ -28,10 +28,10 @@ class InjectionAndUrlMappingTest {
         QuickLinkContext context = new QuickLinkContext(DummyProjectMain.class);
 
         Set<Component> components = new HashSet<>();
-        components.add(Component.interceptionComponent(AgeRepository.class.getConstructor()));
-        components.add(Component.interceptionComponent(PetNameRepository.class.getConstructor()));
-        components.add(Component.interceptionComponent(PetNameService.class.getConstructor(PetNameRepository.class)));
-        components.add(Component.interceptionComponent(DummyController.class.getConstructor(PetNameService.class, Person.class)));
+        components.add(Component.fromConstructor(AgeRepository.class.getConstructor()));
+        components.add(Component.fromConstructor(PetNameRepository.class.getConstructor()));
+        components.add(Component.fromConstructor(PetNameService.class.getConstructor(PetNameRepository.class)));
+        components.add(Component.fromConstructor(DummyController.class.getConstructor(PetNameService.class, Person.class)));
 
         PersonConfig personConfig = new PersonConfig();
         components.add(new Component(PersonConfig.class.getMethod("createPerson", String.class, Integer.class), personConfig));

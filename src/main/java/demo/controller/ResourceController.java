@@ -2,10 +2,10 @@ package demo.controller;
 
 import demo.model.Resource;
 import demo.service.ResourceService;
-import framework.annotations.injection.semantic.Controller;
-import framework.annotations.mapping.IOMapping;
-import framework.annotations.mapping.InputMapping;
-import framework.annotations.mapping.OutputMapping;
+import component_scan.annotations.injection.semantic.Controller;
+import component_scan.annotations.mapping.IOMapping;
+import component_scan.annotations.mapping.InputMapping;
+import component_scan.annotations.mapping.OutputMapping;
 
 import java.util.List;
 

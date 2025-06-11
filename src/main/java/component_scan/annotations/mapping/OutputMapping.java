@@ -1,4 +1,4 @@
-package framework.annotations.mapping;
+package component_scan.annotations.mapping;
 
 import framework.configurables.conversions.OutputConverter;
 

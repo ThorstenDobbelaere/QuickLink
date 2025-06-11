@@ -1,6 +1,6 @@
 package testprojects.cyclicalproject.service;
 
-import framework.annotations.injection.semantic.Service;
+import component_scan.annotations.injection.semantic.Service;
 
 @Service
 public class CyclicalService3 {

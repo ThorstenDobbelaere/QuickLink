@@ -2,8 +2,7 @@ package demo.config.output;
 
 import demo.controller.dto.WarehouseDto;
 import demo.model.Resource;
-import demo.model.Warehouse;
-import framework.annotations.Injectable;
+import component_scan.annotations.Injectable;
 import framework.configurables.conversions.OutputConverter;
 import framework.request.response.ContentType;
 

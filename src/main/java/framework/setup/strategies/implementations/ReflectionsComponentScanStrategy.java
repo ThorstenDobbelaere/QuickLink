@@ -1,6 +1,6 @@
 package framework.setup.strategies.implementations;
 
-import framework.setup.helper.AccessibilityHelper;
+import component_scan.helper.AccessibilityHelper;
 import framework.setup.model.reflection.annotated_entities.AnnotatedMethod;
 import framework.setup.model.reflection.annotated_entities.InjectableClass;
 import framework.setup.model.reflection.annotation.AnnotationSet;

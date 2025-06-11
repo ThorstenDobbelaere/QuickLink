@@ -1,7 +1,7 @@
 package testprojects.emptymappingproject.controller;
 
-import framework.annotations.injection.semantic.Controller;
-import framework.annotations.mapping.OutputMapping;
+import component_scan.annotations.injection.semantic.Controller;
+import component_scan.annotations.mapping.OutputMapping;
 
 @Controller
 public class EmptyMappingController {

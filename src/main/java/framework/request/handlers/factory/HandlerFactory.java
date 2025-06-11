@@ -1,8 +1,8 @@
 package framework.request.handlers.factory;
 
-import framework.annotations.mapping.IOMapping;
-import framework.annotations.mapping.InputMapping;
-import framework.annotations.mapping.OutputMapping;
+import component_scan.annotations.mapping.IOMapping;
+import component_scan.annotations.mapping.InputMapping;
+import component_scan.annotations.mapping.OutputMapping;
 import framework.configurables.conversions.OutputConverter;
 import framework.context.QuickLinkContext;
 import framework.exceptions.request.RequestMappingException;

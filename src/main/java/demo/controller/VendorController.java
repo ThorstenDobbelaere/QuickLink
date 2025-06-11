@@ -4,9 +4,9 @@ import demo.config.output.JsonOutputConverter;
 import demo.model.Vendor;
 import demo.service.SleepyService;
 import demo.service.VendorService;
-import framework.annotations.injection.semantic.Controller;
-import framework.annotations.mapping.InputMapping;
-import framework.annotations.mapping.OutputMapping;
+import component_scan.annotations.injection.semantic.Controller;
+import component_scan.annotations.mapping.InputMapping;
+import component_scan.annotations.mapping.OutputMapping;
 import framework.request.response.HttpStatus;
 import framework.request.response.ResponseEntity;
 

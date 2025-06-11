@@ -1,7 +1,7 @@
 package testprojects.testproject.config;
 
-import framework.annotations.injection.config.Bean;
-import framework.annotations.injection.config.Config;
+import component_scan.annotations.injection.config.Bean;
+import component_scan.annotations.injection.config.Config;
 import testprojects.testproject.repo.AgeRepository;
 
 @Config

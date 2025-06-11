@@ -1,4 +1,4 @@
-package framework.exceptions.componentscan;
+package component_scan.exceptions;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

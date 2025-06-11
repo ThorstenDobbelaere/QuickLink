@@ -1,7 +1,7 @@
 package testprojects.testproject.controller;
 
-import framework.annotations.injection.semantic.Controller;
-import framework.annotations.mapping.OutputMapping;
+import component_scan.annotations.injection.semantic.Controller;
+import component_scan.annotations.mapping.OutputMapping;
 import testprojects.testproject.model.Person;
 import testprojects.testproject.model.Pet;
 import testprojects.testproject.service.PetNameService;

@@ -1,6 +1,6 @@
-package framework.setup.helper;
+package component_scan.helper;
 
-import framework.exceptions.componentscan.AccessException;
+import component_scan.exceptions.AccessException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

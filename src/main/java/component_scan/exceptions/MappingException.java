@@ -1,4 +1,4 @@
-package framework.exceptions.componentscan;
+package component_scan.exceptions;
 
 public class MappingException extends RuntimeException {
     private MappingException(String message) {

@@ -1,15 +1,11 @@
-package framework.annotations.injection.semantic;
-
-import framework.annotations.Injectable;
+package component_scan.annotations.injection.config;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Injectable
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Controller{
-    String value() default "";
+@Target(ElementType.METHOD)
+public @interface Bean {
 }

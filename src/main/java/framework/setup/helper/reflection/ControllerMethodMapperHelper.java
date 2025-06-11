@@ -1,9 +1,9 @@
 package framework.setup.helper.reflection;
 
-import framework.annotations.mapping.IOMapping;
-import framework.annotations.mapping.InputMapping;
-import framework.annotations.mapping.OutputMapping;
-import framework.exceptions.componentscan.DuplicateException;
+import component_scan.annotations.mapping.IOMapping;
+import component_scan.annotations.mapping.InputMapping;
+import component_scan.annotations.mapping.OutputMapping;
+import component_scan.exceptions.DuplicateException;
 import framework.setup.model.MappedController;
 import framework.setup.model.MappedControllerMethod;
 

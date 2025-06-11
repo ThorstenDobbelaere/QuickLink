@@ -1,11 +1,11 @@
-package framework.annotations.injection.config;
+package component_scan.annotations.clarification;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Config {
+@Target(ElementType.CONSTRUCTOR)
+public @interface PrimaryConstructor {
 }

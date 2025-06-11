@@ -2,8 +2,8 @@ package demo.config;
 
 import demo.config.output.ColoredOutputConverter;
 import demo.config.output.JsonOutputConverter;
-import framework.annotations.injection.config.Bean;
-import framework.annotations.injection.config.Config;
+import component_scan.annotations.injection.config.Bean;
+import component_scan.annotations.injection.config.Config;
 import framework.configurables.conversions.OutputConverter;
 import framework.configurables.conversions.impl.OutputConverterDefaultImpl;
 

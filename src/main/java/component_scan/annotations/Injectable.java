@@ -1,14 +1,11 @@
-package framework.annotations.injection.semantic;
-
-import framework.annotations.Injectable;
+package component_scan.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Injectable
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Service {
+public @interface Injectable {
 }
