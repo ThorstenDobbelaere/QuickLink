@@ -2,7 +2,7 @@ package demo;
 
 import demo.config.OutputConverterConfig;
 import framework.QuickLink;
-import framework.context.RunMode;
+import framework.context.config.RunMode;
 import framework.context.config.ListenerConfiguration;
 import framework.context.config.QuickLinkContextConfiguration;
 

@@ -1,14 +1,5 @@
 package demotests;
 
-import demo.DemoProject;
-import demo.config.OutputConverterConfig;
-import framework.context.QuickLinkContext;
-import framework.context.RunMode;
-import framework.request.response.ContentType;
-import framework.request.response.HttpResponse;
-import framework.setup.*;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 public class WarehouseTests {
 

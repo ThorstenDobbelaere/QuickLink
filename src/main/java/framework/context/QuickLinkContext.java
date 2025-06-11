@@ -3,6 +3,8 @@ package framework.context;
 import framework.context.config.ListenerConfiguration;
 import framework.context.config.LogFormatter;
 import framework.context.config.QuickLinkContextConfiguration;
+import framework.context.config.RunMode;
+import framework.context.state.ResultCache;
 import framework.exceptions.internal.NoSuchComponentException;
 import framework.exceptions.internal.ComponentCastError;
 import framework.setup.model.Component;

@@ -1,7 +1,5 @@
 package framework.context.config;
 
-import framework.context.RunMode;
-
 public record QuickLinkContextConfiguration(
         LogFormatter logFormatter,
         ListenerConfiguration listenerConfiguration,

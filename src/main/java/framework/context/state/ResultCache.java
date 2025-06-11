@@ -1,4 +1,4 @@
-package framework.context;
+package framework.context.state;
 
 import framework.setup.model.Component;
 import framework.setup.model.MappedController;
@@ -17,8 +17,6 @@ public class ResultCache {
     private Map<Component, Object> componentObjectMap;
     private Set<MappedController> mappedControllers;
     private List<MappedRequestHandler> mappedRequestHandlerList;
-
-    ResultCache(){}
 
     public Collection<Component> getComponents() {
         return components;

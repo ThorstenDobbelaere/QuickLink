@@ -1,9 +1,11 @@
 package framework.request.listener;
 
 import framework.context.QuickLinkContext;
-import framework.context.RunMode;
+import framework.context.config.RunMode;
 
 public class InputListenerFactory {
+    private InputListenerFactory() {}
+
     public static InputListener createInputListener(QuickLinkContext config) {
         RunMode runMode = config.getRunMode();
 
