@@ -39,7 +39,6 @@ class ReflectionsComponentScanStrategyTest {
         ));
 
         // When i look for components
-        // Optional<InjectableClass<?>> personInjectable = getOptionalInjectable(Person.class, dummyFolderInjectables);
         Optional<InjectableClass<?>> componentScanTestComponent = getOptionalInjectable(ReflectionsComponentScanStrategyTest.class, dummyFolderInjectables);
 
         // Then I find the controllers with the right mapping

@@ -3,6 +3,7 @@ package framework.setup;
 import component_scan.annotations.injection.config.Bean;
 import component_scan.annotations.injection.config.Config;
 import framework.configurables.conversions.impl.DefaultConfigurationMappings;
+import framework.context.QuickLinkContext;
 import framework.context.config.LogFormatter;
 import component_scan.exceptions.DuplicateException;
 import framework.exceptions.internal.MapMethodObjectInternalError;
@@ -10,10 +11,10 @@ import framework.setup.model.Component;
 import framework.setup.model.reflection.annotated_entities.InjectableClass;
 import framework.setup.model.reflection.annotated_entities.InjectableClassWithInterceptedMethods;
 import framework.setup.model.reflection.annotation.AnnotationSet;
-import framework.setup.strategies.DefaultStrategies;
 import framework.setup.strategies.contracts.ComponentScanStrategy;
 import component_scan.helper.AccessibilityHelper;
 import component_scan.helper.ConstructorFinder;
+import framework.setup.strategies.contracts.InterceptMethodScanStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,11 +28,17 @@ public class ComponentScanner {
 
     private ComponentScanner() {}
 
-    public static void scanComponentsAndInterceptables(ComponentScanStrategy componentScanStrategy, LogFormatter logFormatter) {
-        var injectableScanStrategy = DefaultStrategies.injectableScanStrategy();
+    public static void scanComponentsAndInterceptables(QuickLinkContext context) {
+        LogFormatter logFormatter = context.getLogFormatter();
+        var strategies = context.getStrategies();
+        ComponentScanStrategy componentScanStrategy = strategies.componentScanStrategy();
+        InterceptMethodScanStrategy interceptMethodScanStrategy = strategies.interceptMethodScanStrategy();
+
+        var injectableScanStrategy = strategies.injectableScanStrategy();
         Collection<InjectableClass<?>> injectableClasses = injectableScanStrategy.scanInjectableClasses();
 
-        var timedMethods = DefaultStrategies.interceptMethodScanStrategy().getInterceptedMethods();
+        var timedMethods = interceptMethodScanStrategy.getInterceptedMethods();
+        context.getCache().setTimedMethods(timedMethods);
         logTimedMethodScanCompleteMessage(logFormatter, timedMethods);
 
         Collection<Component> components = new LinkedHashSet<>();
@@ -39,6 +46,7 @@ public class ComponentScanner {
         components.addAll(toEmptyComponents(injectableClasses));
         applyDefaultConfigurations(components);
         checkForDuplicates(components);
+        context.getCache().setComponents(components);
 
         logComponentScanCompleteMessage(logFormatter, components);
     }

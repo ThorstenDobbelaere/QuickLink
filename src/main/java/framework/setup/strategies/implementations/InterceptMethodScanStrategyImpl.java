@@ -3,24 +3,25 @@ package framework.setup.strategies.implementations;
 import framework.setup.model.reflection.annotated_entities.InjectableClass;
 import framework.setup.model.reflection.annotated_entities.InjectableClassWithInterceptedMethods;
 import framework.setup.model.reflection.annotation.AnnotationSet;
-import framework.setup.strategies.DefaultStrategies;
 import framework.setup.strategies.contracts.ComponentScanStrategy;
+import framework.setup.strategies.contracts.InjectableScanStrategy;
 import framework.setup.strategies.contracts.InterceptMethodScanStrategy;
 
 import java.util.Collection;
 
 public class InterceptMethodScanStrategyImpl implements InterceptMethodScanStrategy {
     private final ComponentScanStrategy componentScanStrategy;
+    private final InjectableScanStrategy injectableScanStrategy;
     private final AnnotationSet annotationsToScan;
 
-    public InterceptMethodScanStrategyImpl(ComponentScanStrategy componentScanStrategy, AnnotationSet annotationsToScan) {
+    public InterceptMethodScanStrategyImpl(ComponentScanStrategy componentScanStrategy, InjectableScanStrategy injectableScanStrategy, AnnotationSet annotationsToScan) {
         this.componentScanStrategy = componentScanStrategy;
+        this.injectableScanStrategy = injectableScanStrategy;
         this.annotationsToScan = annotationsToScan;
     }
 
     @Override
     public Collection<InjectableClassWithInterceptedMethods<?>> getInterceptedMethods() {
-        var injectableScanStrategy = DefaultStrategies.injectableScanStrategy();
         Collection<InjectableClass<?>> injectableClasses = injectableScanStrategy.scanInjectableClasses();
         return scanInterceptedMethods(injectableClasses);
     }

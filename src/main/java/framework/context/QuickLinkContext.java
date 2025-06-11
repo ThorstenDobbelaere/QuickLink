@@ -3,6 +3,7 @@ package framework.context;
 import framework.context.config.ListenerConfiguration;
 import framework.context.config.LogFormatter;
 import framework.context.config.QuickLinkContextConfiguration;
+import framework.context.config.QuickLinkStrategies;
 import framework.context.config.RunMode;
 import framework.context.state.ResultCache;
 import framework.exceptions.internal.NoSuchComponentException;
@@ -15,21 +16,22 @@ import java.util.Optional;
 
 public class QuickLinkContext {
     private final ResultCache cache;
-    private final Package rootPackage;
     private final QuickLinkContextConfiguration configuration;
 
     private Instant lastTime;
 
     public QuickLinkContext(Class<?> root) {
-        this(root, new QuickLinkContextConfiguration.Builder().build());
+        this(new QuickLinkContextConfiguration.Builder()
+                .setRootClass(root)
+                .build()
+        );
     }
 
-    public String getPackageName() {
-        return rootPackage.getName();
+    public QuickLinkStrategies getStrategies() {
+        return configuration.strategies();
     }
 
-    public QuickLinkContext(Class<?> root, QuickLinkContextConfiguration config) {
-        this.rootPackage = root.getPackage();
+    public QuickLinkContext(QuickLinkContextConfiguration config) {
         this.lastTime = Instant.now();
         cache = new ResultCache();
         this.configuration = config;

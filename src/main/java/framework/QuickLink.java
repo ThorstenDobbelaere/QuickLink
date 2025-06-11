@@ -2,10 +2,10 @@ package framework;
 
 import framework.context.QuickLinkContext;
 import framework.context.config.QuickLinkContextConfiguration;
+import framework.exceptions.listener.ListenerIOException;
 import framework.request.listener.InputListener;
 import framework.request.listener.InputListenerFactory;
 import framework.setup.*;
-import framework.setup.strategies.DefaultStrategies;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -18,18 +18,20 @@ public class QuickLink {
         LOGGER.info("Finished {} in {} ms", description, context.getChrono());
     }
 
-    public static void run(Class<?> root, QuickLinkContextConfiguration configuration){
-        QuickLinkContext context = new QuickLinkContext(root, configuration);
+    public static void run(QuickLinkContextConfiguration configuration){
+        QuickLinkContext context = new QuickLinkContext(configuration);
+        setup(context);
+    }
+
+    public static void run(Class<?> root) {
+        QuickLinkContext context = new QuickLinkContext(root);
         setup(context);
     }
 
     private static void setup(QuickLinkContext context) {
         printTimeStamp(context, "context setup");
 
-        var componentScanStrategy = DefaultStrategies.componentScanStrategy(context.getPackageName());
-        var logFormatter = context.getLogFormatter();
-
-        ComponentScanner.scanComponentsAndInterceptables(componentScanStrategy, logFormatter);
+        ComponentScanner.scanComponentsAndInterceptables(context);
         printTimeStamp(context, "component and intercept method scanning");
 
         GraphChecker.checkCycles(context);
@@ -51,7 +53,7 @@ public class QuickLink {
         try{
             listener.startListening();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw ListenerIOException.of(e);
         }
 
     }

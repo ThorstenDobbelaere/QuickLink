@@ -44,6 +44,6 @@ public class DemoProject {
                 .setRunMode(runMode)
                 .build();
 
-        QuickLink.run(DemoProject.class, config);
+        QuickLink.run(config);
     }
 }
