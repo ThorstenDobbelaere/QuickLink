@@ -2,32 +2,34 @@ package framework.context.config;
 
 import framework.context.RunMode;
 
-public class QuickLinkContextConfiguration {
-    private LogFormatter logFormatter = null;
-    private ListenerConfiguration listenerConfiguration = null;
-    private RunMode runMode = RunMode.HTTP;
+public record QuickLinkContextConfiguration(
+        LogFormatter logFormatter,
+        ListenerConfiguration listenerConfiguration,
+        RunMode runMode
+) {
 
-    public RunMode getRunMode() {
-        return runMode;
-    }
+    public static class Builder {
+        private RunMode runMode = RunMode.HTTP;
+        private LogFormatter logFormatter = null;
+        private ListenerConfiguration listenerConfiguration = null;
 
-    public void setRunMode(RunMode runMode) {
-        this.runMode = runMode;
-    }
+        public Builder setRunMode(RunMode runMode) {
+            this.runMode = runMode;
+            return this;
+        }
 
-    public LogFormatter getLogFormatter() {
-        return logFormatter;
-    }
+        public Builder setLogFormatter(LogFormatter logFormatter) {
+            this.logFormatter = logFormatter;
+            return this;
+        }
 
-    public void setLogFormatter(LogFormatter logFormatter) {
-        this.logFormatter = logFormatter;
-    }
+        public Builder setListenerConfiguration(ListenerConfiguration listenerConfiguration) {
+            this.listenerConfiguration = listenerConfiguration;
+            return this;
+        }
 
-    public ListenerConfiguration getListenerConfiguration() {
-        return listenerConfiguration;
-    }
-
-    public void setListenerConfiguration(ListenerConfiguration listenerConfiguration) {
-        this.listenerConfiguration = listenerConfiguration;
+        public QuickLinkContextConfiguration build() {
+            return new QuickLinkContextConfiguration(logFormatter, listenerConfiguration, runMode);
+        }
     }
 }

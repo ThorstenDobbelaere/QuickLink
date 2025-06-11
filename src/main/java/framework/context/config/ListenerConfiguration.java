@@ -1,26 +1,26 @@
 package framework.context.config;
 
-public class ListenerConfiguration {
-    private int port;
-    private String shutdownUrl = "/shutdown";
+public record ListenerConfiguration(int port, String shutdownUrl) {
 
+    public static class Builder {
+        private int port = 8080;
+        private String shutdownUrl = "/shutdown";
 
-    public int getPort() {
-        return port;
-    }
+        public Builder setPort(int port) {
+            this.port = port;
+            return this;
+        }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
+        public Builder setShutdownUrl(String shutdownUrl) {
+            if (!shutdownUrl.startsWith("/"))
+                this.shutdownUrl = "/" + shutdownUrl;
+            else
+                this.shutdownUrl = shutdownUrl;
+            return this;
+        }
 
-    public String getShutdownUrl() {
-        return shutdownUrl;
-    }
-
-    public void setShutdownUrl(String shutdownUrl) {
-        if(!shutdownUrl.startsWith("/"))
-            this.shutdownUrl = "/" + shutdownUrl;
-        else
-            this.shutdownUrl = shutdownUrl;
+        public ListenerConfiguration build() {
+            return new ListenerConfiguration(port, shutdownUrl);
+        }
     }
 }

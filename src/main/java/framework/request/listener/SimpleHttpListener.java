@@ -30,7 +30,7 @@ public class SimpleHttpListener implements InputListener{
     }
 
     public void startListening() throws IOException {
-        try(ServerSocket serverSocket = new ServerSocket(config.getPort())){
+        try(ServerSocket serverSocket = new ServerSocket(config.port())){
             this.listening = true;
             while(this.listening){
                 listenAndProcessRequest(serverSocket);
@@ -75,7 +75,7 @@ public class SimpleHttpListener implements InputListener{
 
     private void processUrl(String url, Socket socket) throws IOException {
         LOGGER.debug("Received call to {}", url);
-        if(url.equals(config.getShutdownUrl())){
+        if(url.equals(config.shutdownUrl())){
             LOGGER.info("Stopping...");
             listening = false;
             HttpResponse ok = new HttpResponse(HttpStatus.OK);

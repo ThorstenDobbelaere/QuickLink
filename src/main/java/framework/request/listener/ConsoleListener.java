@@ -36,7 +36,7 @@ public class ConsoleListener implements InputListener{
 
     private void processUrl(String url) {
         LOGGER.debug("Received call to {}", url);
-        if(url.equals(config.getShutdownUrl())){
+        if(url.equals(config.shutdownUrl())){
             LOGGER.info("Stopping...");
             listening = false;
             HttpResponse ok = new HttpResponse(HttpStatus.OK);

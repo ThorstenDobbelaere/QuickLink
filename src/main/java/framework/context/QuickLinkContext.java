@@ -13,46 +13,36 @@ import java.util.Optional;
 
 public class QuickLinkContext {
     private final ResultCache cache;
-    private final String packageName;
+    private final Package rootPackage;
+    private final QuickLinkContextConfiguration configuration;
 
-    private LogFormatter logFormatter = new LogFormatter();
-    private ListenerConfiguration listenerConfiguration = new ListenerConfiguration();
-    private RunMode runMode;
     private Instant lastTime;
 
     public QuickLinkContext(Class<?> root) {
-        this.packageName = root.getPackage().getName();
-        this.lastTime = Instant.now();
-        cache = new ResultCache();
-        runMode = RunMode.HTTP;
+        this(root, new QuickLinkContextConfiguration.Builder().build());
     }
 
     public String getPackageName() {
-        return packageName;
+        return rootPackage.getName();
     }
 
     public QuickLinkContext(Class<?> root, QuickLinkContextConfiguration config) {
-        this(root);
-
-        if(config.getLogFormatter() != null)
-            this.logFormatter = config.getLogFormatter();
-
-        if(config.getListenerConfiguration() != null)
-            this.listenerConfiguration = config.getListenerConfiguration();
-
-        this.runMode = config.getRunMode();
+        this.rootPackage = root.getPackage();
+        this.lastTime = Instant.now();
+        cache = new ResultCache();
+        this.configuration = config;
     }
 
     public RunMode getRunMode() {
-        return runMode;
+        return configuration.runMode();
     }
 
     public LogFormatter getLogFormatter() {
-        return logFormatter;
+        return configuration.logFormatter();
     }
 
     public ListenerConfiguration getListenerConfiguration() {
-        return listenerConfiguration;
+        return configuration.listenerConfiguration();
     }
 
     public long getChrono() {

@@ -34,15 +34,15 @@ public class DemoProject {
             LOGGER.warning("Using default settings");
         }
 
+        ListenerConfiguration listenerConfiguration = new ListenerConfiguration.Builder()
+                .setPort(port)
+                .setShutdownUrl(shutdownUrl)
+                .build();
 
-
-        ListenerConfiguration listenerConfiguration = new ListenerConfiguration();
-        listenerConfiguration.setPort(port);
-        listenerConfiguration.setShutdownUrl(shutdownUrl);
-
-        QuickLinkContextConfiguration config = new QuickLinkContextConfiguration();
-        config.setListenerConfiguration(listenerConfiguration);
-        config.setRunMode(runMode);
+        QuickLinkContextConfiguration config = new QuickLinkContextConfiguration.Builder()
+                .setListenerConfiguration(listenerConfiguration)
+                .setRunMode(runMode)
+                .build();
 
         QuickLink.run(DemoProject.class, config);
     }
