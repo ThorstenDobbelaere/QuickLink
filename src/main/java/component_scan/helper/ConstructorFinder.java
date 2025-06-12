@@ -1,6 +1,5 @@
 package component_scan.helper;
 
-import component_scan.annotations.clarification.PrimaryConstructor;
 import component_scan.exceptions.ConstructorScanException;
 import framework.setup.model.reflection.annotated_entities.InjectableClass;
 
@@ -8,36 +7,47 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class ConstructorFinder {
-    private ConstructorFinder() {}
+    private final Predicate<Constructor<?>> primaryPredicate;
 
-    public static <T> Constructor<T> findPrimaryConstructor(InjectableClass<T> componentClass) {
-        Class<T> classType = componentClass.classType();
-        List<Constructor<T>> constructors = getConstructors(componentClass);
+    public ConstructorFinder(Predicate<Constructor<?>> primaryPredicate) {
+        this.primaryPredicate = primaryPredicate;
+    }
+
+    public <T> Constructor<T> findPrimaryConstructor(InjectableClass<T> componentClass) {
+        return findPrimaryConstructor(componentClass.classType());
+    }
+
+    public <T> Constructor<T> findPrimaryConstructor(Class<T> type) {
+        List<Constructor<T>> constructors = getConstructors(type);
 
         if (constructors.isEmpty())
-            throw ConstructorScanException.noConstructor(classType);
+            throw ConstructorScanException.noConstructor(type);
 
         var primaryConstructors = constructors.stream()
-                .filter(ConstructorFinder::isPrimary)
+                .filter(this::isPrimary)
                 .toList();
 
         if (primaryConstructors.size() == 1)
             return constructors.getFirst();
 
         if (primaryConstructors.size() > 1)
-            throw ConstructorScanException.multiplePrimaryConstructors(classType);
+            throw ConstructorScanException.multiplePrimaryConstructors(type);
 
         if (constructors.size() > 1)
-            throw ConstructorScanException.multipleConstructorsNoPrimary(classType);
+            throw ConstructorScanException.multipleConstructorsNoPrimary(type);
 
         return constructors.getFirst();
     }
 
-    public static <T> Constructor<T> findDefaultConstructor(InjectableClass<T> componentClass) {
-        Class<?> type = componentClass.classType();
-        List<Constructor<T>> constructors = getConstructors(componentClass);
+    public <T> Constructor<T> findDefaultConstructor(InjectableClass<T> componentClass) {
+        return findDefaultConstructor(componentClass.classType());
+    }
+
+    public <T> Constructor<T> findDefaultConstructor(Class<T> type) {
+        List<Constructor<T>> constructors = getConstructors(type);
 
         if (constructors.isEmpty())
             throw ConstructorScanException.noConstructor(type);
@@ -51,25 +61,24 @@ public class ConstructorFinder {
         throw ConstructorScanException.configNoDefaultConstructor(type);
     }
 
-    private static <T> List<Constructor<T>> getConstructors(InjectableClass<T> componentClass) {
-        Class<?> type = componentClass.classType();
+    private <T> List<Constructor<T>> getConstructors(Class<T> type) {
         List<Constructor<?>> constructors = Arrays.stream(type.getConstructors())
-                .filter(ConstructorFinder::isAccessible)
+                .filter(this::isAccessible)
                 .toList();
 
-        return constructors.stream().map(ConstructorFinder::<T>uncheckedCast).toList();
+        return constructors.stream().map(this::<T>uncheckedCast).toList();
     }
 
     @SuppressWarnings("unchecked")
-    private static  <T> Constructor<T> uncheckedCast(Constructor<?> constructor) {
+    private  <T> Constructor<T> uncheckedCast(Constructor<?> constructor) {
         return (Constructor<T>) constructor;
     }
 
-    private static boolean isAccessible(Constructor<?> constructor) {
+    private boolean isAccessible(Constructor<?> constructor) {
         return !Modifier.isPrivate(constructor.getModifiers());
     }
 
-    private static boolean isPrimary(Constructor<?> constructor) {
-        return constructor.getAnnotation(PrimaryConstructor.class) != null;
+    private boolean isPrimary(Constructor<?> constructor) {
+        return primaryPredicate.test(constructor);
     }
 }

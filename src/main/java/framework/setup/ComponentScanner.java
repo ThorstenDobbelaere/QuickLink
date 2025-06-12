@@ -2,25 +2,25 @@ package framework.setup;
 
 import component_scan.annotations.injection.config.Bean;
 import component_scan.annotations.injection.config.Config;
+import component_scan.helper.ConstructorFinder;
 import framework.configurables.conversions.impl.DefaultConfigurationMappings;
 import framework.context.QuickLinkContext;
 import framework.context.config.LogFormatter;
-import component_scan.exceptions.DuplicateException;
-import framework.exceptions.internal.MapMethodObjectInternalError;
+import framework.context.config.QuickLinkStrategies;
 import framework.setup.model.Component;
-import framework.setup.model.reflection.annotated_entities.InjectableClass;
 import framework.setup.model.reflection.annotated_entities.InjectableClassWithInterceptedMethods;
 import framework.setup.model.reflection.annotation.AnnotationSet;
 import framework.setup.strategies.contracts.ComponentScanStrategy;
-import component_scan.helper.AccessibilityHelper;
-import component_scan.helper.ConstructorFinder;
+import framework.setup.strategies.contracts.ComponentSupplier;
 import framework.setup.strategies.contracts.InterceptMethodScanStrategy;
+import framework.setup.strategies.implementations.component.AnnotatedClassComponentSupplier;
+import framework.setup.strategies.implementations.component.AnnotatedMethodComponentSupplier;
+import framework.setup.strategies.implementations.component.ClassMethodComponentSupplier;
+import framework.setup.strategies.implementations.component.CombinedAnnotationsComponentSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Method;
 import java.util.*;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 public class ComponentScanner {
@@ -30,24 +30,41 @@ public class ComponentScanner {
 
     public static void scanComponentsAndInterceptables(QuickLinkContext context) {
         LogFormatter logFormatter = context.getLogFormatter();
-        var strategies = context.getStrategies();
+        QuickLinkStrategies strategies = context.getStrategies();
         ComponentScanStrategy componentScanStrategy = strategies.componentScanStrategy();
         InterceptMethodScanStrategy interceptMethodScanStrategy = strategies.interceptMethodScanStrategy();
 
         var injectableScanStrategy = strategies.injectableScanStrategy();
-        Collection<InjectableClass<?>> injectableClasses = injectableScanStrategy.scanInjectableClasses();
 
         var timedMethods = interceptMethodScanStrategy.getInterceptedMethods();
         context.getCache().setTimedMethods(timedMethods);
         logTimedMethodScanCompleteMessage(logFormatter, timedMethods);
+        ConstructorFinder constructorFinder = strategies.constructorFinder();
 
-        Collection<Component> components = new LinkedHashSet<>();
-        components.addAll(scanBeanComponents(componentScanStrategy));
-        components.addAll(toEmptyComponents(injectableClasses));
-        applyDefaultConfigurations(components);
-        checkForDuplicates(components);
+        ComponentSupplier beans = new AnnotatedMethodComponentSupplier(
+                AnnotationSet.of(Config.class),
+                AnnotationSet.of(Bean.class),
+                componentScanStrategy,
+                constructorFinder
+        );
+
+        ComponentSupplier injectables = new AnnotatedClassComponentSupplier(
+                injectableScanStrategy,
+                constructorFinder
+        );
+
+        ComponentSupplier defaultComponents = new ClassMethodComponentSupplier<>(
+                DefaultConfigurationMappings.class,
+                constructorFinder
+        );
+
+        ComponentSupplier combinedComponentSupplier = new CombinedAnnotationsComponentSupplier(
+                Arrays.asList(beans, injectables),
+                defaultComponents
+        );
+
+        Collection<Component> components = combinedComponentSupplier.getComponents();
         context.getCache().setComponents(components);
-
         logComponentScanCompleteMessage(logFormatter, components);
     }
 
@@ -78,88 +95,5 @@ public class ComponentScanner {
 
     }
 
-    private static List<Component> scanBeanComponents(ComponentScanStrategy componentScanStrategy) {
-        AnnotationSet annotationSet = new AnnotationSet(Set.of(Config.class));
-        var configObjects = instantiateConfigurations(componentScanStrategy.getClassesAnnotatedWith(annotationSet));
 
-        return findBeansForClasses(configObjects.keySet())
-                .stream()
-                .map(m-> tryMapBeanToComponent(configObjects, m))
-                .toList();
-    }
-
-    private static void checkForDuplicates(Collection<Component> components) {
-        List<Component> duplicateComponents = components.stream()
-                .filter(entry1->components.stream()
-                        .filter(entry2-> entry1.getType().equals(entry2.getType())
-                        ).count()>1)
-                .distinct()
-                .toList();
-
-        if (!duplicateComponents.isEmpty()) {
-            throw DuplicateException.duplicateComponent(duplicateComponents.getFirst().getType());
-        }
-    }
-
-    private static void applyDefaultConfigurations(Collection<Component> components) {
-        DefaultConfigurationMappings defaultConfigurationMappings = new DefaultConfigurationMappings();
-        List<Component> defaultComponents = Arrays.stream(DefaultConfigurationMappings.class
-                        .getDeclaredMethods())
-                .map(m->new Component(m, defaultConfigurationMappings))
-                .toList();
-
-        List<Component> defaultComponentsToAdd = defaultComponents.stream()
-                .filter(entry1 -> components.stream().noneMatch(entry2 -> entry1.getType().equals(entry2.getType())))
-                .toList();
-
-        components.addAll(defaultComponentsToAdd);
-    }
-
-    private static Map<Class<?>, Object> instantiateConfigurations(Collection<InjectableClass<?>> classesToMap) {
-        UnaryOperator<Component> instantiateWithDefaultConstructor = component -> {
-            component.instantiate();
-            return component;
-        };
-
-        return classesToMap.stream()
-                .map(ConstructorFinder::findDefaultConstructor)
-                .map(AccessibilityHelper::trySetConstructorAccessible)
-                .map(Component::fromConstructor)
-                .map(instantiateWithDefaultConstructor)
-                .collect(Collectors.toUnmodifiableMap(Component::getType, Component::getInstance));
-    }
-
-    private static List<Component> toEmptyComponents(Collection<InjectableClass<?>> injectableClasses) {
-        return injectableClasses
-                .stream()
-                .map(ConstructorFinder::findPrimaryConstructor)
-                .map(AccessibilityHelper::trySetConstructorAccessible)
-                .map(Component::fromConstructor)
-                .toList();
-    }
-
-    private static List<Method> findBeansForClasses(Collection<Class<?>> classList) {
-        return classList.stream()
-                .map(ComponentScanner::getMethodsWithAnnotation)
-                .reduce(new LinkedList<>(), (l1, l2)->{
-                    l1.addAll(l2);
-                    return l1;
-                });
-    }
-
-    private static List<Method> getMethodsWithAnnotation(Class<?> type) {
-        return Arrays.stream(type.getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(Bean.class))
-                .map(AccessibilityHelper::trySetMethodAccessible)
-                .toList();
-    }
-
-    private static Component tryMapBeanToComponent(Map<Class<?>, Object> configObjects, Method method) {
-        Class<?> methodClass = method.getDeclaringClass();
-        if(!configObjects.containsKey(methodClass)) {
-            throw MapMethodObjectInternalError.configNotFound(methodClass);
-        }
-        Object value = configObjects.get(methodClass);
-        return new Component(method, value);
-    }
 }

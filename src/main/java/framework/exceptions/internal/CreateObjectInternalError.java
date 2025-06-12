@@ -24,7 +24,7 @@ public class CreateObjectInternalError extends RuntimeException {
         return new CreateObjectInternalError(String.format("Could not create instance for %s: Exception thrown by method or constructor: %s.", type.getName(), e.getMessage()));
     }
 
-    public static CreateObjectInternalError newInstanceException(Class<?> type, InstantiationException e) {
+    public static CreateObjectInternalError newInstanceException(Class<?> type, ObjectCreationException e) {
         return new CreateObjectInternalError(String.format("Could not create instance for %s: Constructor not available: %s.", type.getName(), e.getMessage()));
     }
 }

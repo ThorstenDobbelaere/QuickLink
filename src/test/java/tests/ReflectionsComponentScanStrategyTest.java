@@ -101,7 +101,7 @@ class ReflectionsComponentScanStrategyTest {
     ) {
         Reflections reflections = new Reflections(DummyProjectMain.class.getPackage().getName());
         ComponentScanStrategy strategy = new ReflectionsComponentScanStrategy(reflections);
-        AnnotationSet annotationSet = new AnnotationSet(annotations);
+        AnnotationSet annotationSet = AnnotationSet.of(annotations);
         return strategy.getClassesAnnotatedWith(annotationSet);
     }
 
@@ -111,7 +111,7 @@ class ReflectionsComponentScanStrategyTest {
     ) {
         Reflections reflections = new Reflections(DummyProjectMain.class.getPackage().getName());
         ComponentScanStrategy strategy = new ReflectionsComponentScanStrategy(reflections);
-        AnnotationSet annotationSet = new AnnotationSet(annotations);
+        AnnotationSet annotationSet = AnnotationSet.of(annotations);
         return strategy.getMethodsAnnotatedWith(type, annotationSet);
     }
 }

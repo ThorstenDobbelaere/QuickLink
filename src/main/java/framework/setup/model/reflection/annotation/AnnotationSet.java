@@ -7,10 +7,16 @@ import java.util.stream.Collectors;
 
 public record AnnotationSet(Set<AnnotationType> annotations) {
 
-    public AnnotationSet(Collection<Class<? extends Annotation>> annotations) {
-        this(annotations.stream()
+    public static AnnotationSet of(Collection<Class<? extends Annotation>> annotations) {
+        Set<AnnotationType> set = annotations.stream()
                 .map(AnnotationType::new)
-                .collect(Collectors.toSet())
-        );
+                .collect(Collectors.toSet());
+
+        return new AnnotationSet(set);
+    }
+
+    public static AnnotationSet of(Class<? extends Annotation> annotation) {
+        Set<AnnotationType> set = Set.of(new AnnotationType(annotation));
+        return new AnnotationSet(set);
     }
 }

@@ -1,10 +1,12 @@
 package framework.setup.strategies;
 
 import component_scan.annotations.Injectable;
+import component_scan.annotations.clarification.PrimaryConstructor;
 import component_scan.annotations.injection.semantic.Controller;
 import component_scan.annotations.injection.semantic.Repository;
 import component_scan.annotations.injection.semantic.Service;
 import component_scan.annotations.interception.Timed;
+import component_scan.helper.ConstructorFinder;
 import framework.context.config.ComponentScanScope;
 import framework.context.config.QuickLinkStrategies;
 import framework.setup.model.reflection.annotation.AnnotationSet;
@@ -20,12 +22,14 @@ import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class DefaultStrategies {
     private DefaultStrategies() {}
@@ -41,7 +45,7 @@ public class DefaultStrategies {
 
         return new AnnotationBasedInjectableScanStrategy(
                 componentScanStrategy,
-                new AnnotationSet(injectableAnnotations)
+                AnnotationSet.of(injectableAnnotations)
         );
     }
 
@@ -84,12 +88,17 @@ public class DefaultStrategies {
                 Timed.class
         );
 
-        AnnotationSet annotationSet = new AnnotationSet(interceptMethodAnnotations);
+        AnnotationSet annotationSet = AnnotationSet.of(interceptMethodAnnotations);
         return new InterceptMethodScanStrategyImpl(
                 componentScanStrategy,
                 injectableScanStrategy,
                 annotationSet
         );
+    }
+
+    public static ConstructorFinder constructorFinder() {
+        Predicate<Constructor<?>> isPrimary = c -> c.getAnnotation(PrimaryConstructor.class) != null;
+        return new ConstructorFinder(isPrimary);
     }
 
     public static QuickLinkStrategies strategies(ComponentScanScope scope) {
@@ -99,11 +108,13 @@ public class DefaultStrategies {
                 componentScanStrategy,
                 injectableScanStrategy
         );
+        ConstructorFinder constructorFinder = constructorFinder();
 
         return new QuickLinkStrategies(
                 componentScanStrategy,
                 injectableScanStrategy,
-                interceptMethodScanStrategy
+                interceptMethodScanStrategy,
+                constructorFinder
         );
     }
 }
