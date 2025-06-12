@@ -1,4 +1,4 @@
-package component_scan.strategies.implementations;
+package reflection;
 
 import component_scan.helper.AccessibilityHelper;
 import framework.setup.model.reflection.annotated_entities.AnnotatedMethod;

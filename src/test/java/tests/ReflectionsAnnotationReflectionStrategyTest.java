@@ -11,7 +11,7 @@ import framework.setup.model.reflection.annotated_entities.AnnotatedMethod;
 import framework.setup.model.reflection.annotated_entities.InjectableClass;
 import framework.setup.model.reflection.annotation.AnnotationSet;
 import component_scan.strategies.contracts.AnnotationReflectionStrategy;
-import component_scan.strategies.implementations.ReflectionsAnnotationReflectionStrategy;
+import reflection.ReflectionsAnnotationReflectionStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
