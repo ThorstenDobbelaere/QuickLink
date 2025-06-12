@@ -1,4 +1,4 @@
-package framework.setup.strategies.implementations.component;
+package component_scan.strategies.implementations.component;
 
 import component_scan.helper.AccessibilityHelper;
 import component_scan.helper.ConstructorFinder;
@@ -7,8 +7,8 @@ import framework.setup.model.Component;
 import framework.setup.model.reflection.annotated_entities.AnnotatedMethod;
 import framework.setup.model.reflection.annotated_entities.InjectableClass;
 import framework.setup.model.reflection.annotation.AnnotationSet;
-import framework.setup.strategies.contracts.ComponentScanStrategy;
-import framework.setup.strategies.contracts.ComponentSupplier;
+import component_scan.strategies.contracts.AnnotationReflectionStrategy;
+import component_scan.strategies.contracts.ComponentSupplier;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -21,17 +21,17 @@ import java.util.stream.Collectors;
 public class AnnotatedMethodComponentSupplier implements ComponentSupplier {
     private final AnnotationSet classAnnotations;
     private final AnnotationSet methodAnnotations;
-    private final ComponentScanStrategy componentScanStrategy;
+    private final AnnotationReflectionStrategy annotationReflectionStrategy;
     private final ConstructorFinder constructorFinder;
 
     public AnnotatedMethodComponentSupplier(
             AnnotationSet classAnnotations,
             AnnotationSet methodAnnotations,
-            ComponentScanStrategy componentScanStrategy, ConstructorFinder constructorFinder
+            AnnotationReflectionStrategy annotationReflectionStrategy, ConstructorFinder constructorFinder
     ) {
         this.classAnnotations = classAnnotations;
         this.methodAnnotations = methodAnnotations;
-        this.componentScanStrategy = componentScanStrategy;
+        this.annotationReflectionStrategy = annotationReflectionStrategy;
         this.constructorFinder = constructorFinder;
     }
 
@@ -41,7 +41,7 @@ public class AnnotatedMethodComponentSupplier implements ComponentSupplier {
     }
 
     private List<Component> scanBeanComponents() {
-        var configObjects = instantiateConfigurations(componentScanStrategy.getClassesAnnotatedWith(classAnnotations));
+        var configObjects = instantiateConfigurations(annotationReflectionStrategy.getClassesAnnotatedWith(classAnnotations));
 
         return findBeansForClasses(configObjects.keySet())
                 .stream()
@@ -73,7 +73,7 @@ public class AnnotatedMethodComponentSupplier implements ComponentSupplier {
     }
 
     private List<Method> getBeanMethods(Class<?> config) {
-        return componentScanStrategy.getMethodsAnnotatedWith(config, methodAnnotations)
+        return annotationReflectionStrategy.getMethodsAnnotatedWith(config, methodAnnotations)
                 .stream()
                 .map(AnnotatedMethod::method)
                 .map(AccessibilityHelper::trySetMethodAccessible)

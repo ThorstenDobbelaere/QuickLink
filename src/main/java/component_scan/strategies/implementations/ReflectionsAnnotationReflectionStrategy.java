@@ -1,11 +1,11 @@
-package framework.setup.strategies.implementations;
+package component_scan.strategies.implementations;
 
 import component_scan.helper.AccessibilityHelper;
 import framework.setup.model.reflection.annotated_entities.AnnotatedMethod;
 import framework.setup.model.reflection.annotated_entities.InjectableClass;
 import framework.setup.model.reflection.annotation.AnnotationSet;
 import framework.setup.model.reflection.annotation.AnnotationType;
-import framework.setup.strategies.contracts.ComponentScanStrategy;
+import component_scan.strategies.contracts.AnnotationReflectionStrategy;
 import org.reflections.Reflections;
 
 import java.util.Arrays;
@@ -13,9 +13,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
-public class ReflectionsComponentScanStrategy implements ComponentScanStrategy {
+public class ReflectionsAnnotationReflectionStrategy implements AnnotationReflectionStrategy {
     private final Reflections reflections;
-    public ReflectionsComponentScanStrategy(Reflections reflections) {
+    public ReflectionsAnnotationReflectionStrategy(Reflections reflections) {
         this.reflections = reflections;
     }
 

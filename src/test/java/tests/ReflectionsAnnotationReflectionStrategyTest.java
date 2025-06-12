@@ -10,8 +10,8 @@ import component_scan.annotations.mapping.OutputMapping;
 import framework.setup.model.reflection.annotated_entities.AnnotatedMethod;
 import framework.setup.model.reflection.annotated_entities.InjectableClass;
 import framework.setup.model.reflection.annotation.AnnotationSet;
-import framework.setup.strategies.contracts.ComponentScanStrategy;
-import framework.setup.strategies.implementations.ReflectionsComponentScanStrategy;
+import component_scan.strategies.contracts.AnnotationReflectionStrategy;
+import component_scan.strategies.implementations.ReflectionsAnnotationReflectionStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
-class ReflectionsComponentScanStrategyTest {
+class ReflectionsAnnotationReflectionStrategyTest {
 
     @Test
     void scanClassesWithAnnotations_shouldReturnCorrectResult() {
@@ -39,7 +39,7 @@ class ReflectionsComponentScanStrategyTest {
         ));
 
         // When i look for components
-        Optional<InjectableClass<?>> componentScanTestComponent = getOptionalInjectable(ReflectionsComponentScanStrategyTest.class, dummyFolderInjectables);
+        Optional<InjectableClass<?>> componentScanTestComponent = getOptionalInjectable(ReflectionsAnnotationReflectionStrategyTest.class, dummyFolderInjectables);
 
         // Then I find the controllers with the right mapping
         assertAnnotationEquals(dummyFolderInjectables, DummyController.class, Controller.class);
@@ -100,7 +100,7 @@ class ReflectionsComponentScanStrategyTest {
             Collection<Class<? extends Annotation>> annotations
     ) {
         Reflections reflections = new Reflections(DummyProjectMain.class.getPackage().getName());
-        ComponentScanStrategy strategy = new ReflectionsComponentScanStrategy(reflections);
+        AnnotationReflectionStrategy strategy = new ReflectionsAnnotationReflectionStrategy(reflections);
         AnnotationSet annotationSet = AnnotationSet.of(annotations);
         return strategy.getClassesAnnotatedWith(annotationSet);
     }
@@ -110,7 +110,7 @@ class ReflectionsComponentScanStrategyTest {
             Collection<Class<? extends Annotation>> annotations
     ) {
         Reflections reflections = new Reflections(DummyProjectMain.class.getPackage().getName());
-        ComponentScanStrategy strategy = new ReflectionsComponentScanStrategy(reflections);
+        AnnotationReflectionStrategy strategy = new ReflectionsAnnotationReflectionStrategy(reflections);
         AnnotationSet annotationSet = AnnotationSet.of(annotations);
         return strategy.getMethodsAnnotatedWith(type, annotationSet);
     }

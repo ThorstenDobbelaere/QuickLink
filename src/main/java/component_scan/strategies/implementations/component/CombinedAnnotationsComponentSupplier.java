@@ -1,8 +1,8 @@
-package framework.setup.strategies.implementations.component;
+package component_scan.strategies.implementations.component;
 
 import component_scan.exceptions.DuplicateException;
 import framework.setup.model.Component;
-import framework.setup.strategies.contracts.ComponentSupplier;
+import component_scan.strategies.contracts.ComponentSupplier;
 
 import java.util.ArrayList;
 import java.util.Collection;

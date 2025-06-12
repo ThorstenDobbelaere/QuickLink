@@ -1,11 +1,11 @@
-package framework.setup.strategies.implementations.component;
+package component_scan.strategies.implementations.component;
 
 import component_scan.helper.AccessibilityHelper;
 import component_scan.helper.ConstructorFinder;
 import framework.setup.model.Component;
 import framework.setup.model.reflection.annotated_entities.InjectableClass;
-import framework.setup.strategies.contracts.ComponentSupplier;
-import framework.setup.strategies.contracts.InjectableScanStrategy;
+import component_scan.strategies.contracts.ComponentSupplier;
+import component_scan.strategies.contracts.InjectableScanStrategy;
 
 import java.util.Collection;
 import java.util.List;

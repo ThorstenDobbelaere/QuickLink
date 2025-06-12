@@ -1,4 +1,4 @@
-package framework.setup.strategies.contracts;
+package component_scan.strategies.contracts;
 
 import framework.setup.model.Component;
 

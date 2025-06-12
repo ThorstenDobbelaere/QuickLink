@@ -10,12 +10,12 @@ import component_scan.helper.ConstructorFinder;
 import framework.context.config.ComponentScanScope;
 import framework.context.config.QuickLinkStrategies;
 import framework.setup.model.reflection.annotation.AnnotationSet;
-import framework.setup.strategies.contracts.ComponentScanStrategy;
-import framework.setup.strategies.contracts.InjectableScanStrategy;
+import component_scan.strategies.contracts.AnnotationReflectionStrategy;
+import component_scan.strategies.contracts.InjectableScanStrategy;
 import framework.setup.strategies.contracts.InterceptMethodScanStrategy;
-import framework.setup.strategies.implementations.AnnotationBasedInjectableScanStrategy;
+import component_scan.strategies.implementations.AnnotationBasedInjectableScanStrategy;
 import framework.setup.strategies.implementations.InterceptMethodScanStrategyImpl;
-import framework.setup.strategies.implementations.ReflectionsComponentScanStrategy;
+import component_scan.strategies.implementations.ReflectionsAnnotationReflectionStrategy;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
@@ -33,9 +33,9 @@ import java.util.function.Predicate;
 
 public class DefaultStrategies {
     private DefaultStrategies() {}
-    private static final Map<ComponentScanScope, ComponentScanStrategy> cachedComponentScanStrategies = new HashMap<>();
+    private static final Map<ComponentScanScope, AnnotationReflectionStrategy> cachedComponentScanStrategies = new HashMap<>();
 
-    public static InjectableScanStrategy injectableScanStrategy(ComponentScanStrategy componentScanStrategy) {
+    public static InjectableScanStrategy injectableScanStrategy(AnnotationReflectionStrategy annotationReflectionStrategy) {
         Collection<Class<? extends Annotation>> injectableAnnotations = Set.of(
                 Injectable.class,
                 Repository.class,
@@ -44,13 +44,13 @@ public class DefaultStrategies {
         );
 
         return new AnnotationBasedInjectableScanStrategy(
-                componentScanStrategy,
+                annotationReflectionStrategy,
                 AnnotationSet.of(injectableAnnotations)
         );
     }
 
     // Use caching to avoid recreating Reflections object and scanning the classpath multiple times.
-    public static ComponentScanStrategy componentScanStrategy(ComponentScanScope scope) {
+    public static AnnotationReflectionStrategy componentScanStrategy(ComponentScanScope scope) {
         if (cachedComponentScanStrategies.containsKey(scope)) {
             return cachedComponentScanStrategies.get(scope);
         }
@@ -75,13 +75,13 @@ public class DefaultStrategies {
 
         Reflections reflections = new Reflections(builder);
 
-        ComponentScanStrategy strategy = new ReflectionsComponentScanStrategy(reflections);
+        AnnotationReflectionStrategy strategy = new ReflectionsAnnotationReflectionStrategy(reflections);
         cachedComponentScanStrategies.put(scope, strategy);
         return strategy;
     }
 
     public static InterceptMethodScanStrategy interceptMethodScanStrategy(
-            ComponentScanStrategy componentScanStrategy,
+            AnnotationReflectionStrategy annotationReflectionStrategy,
             InjectableScanStrategy injectableScanStrategy
     ) {
         Collection<Class<? extends Annotation>> interceptMethodAnnotations = Set.of(
@@ -90,7 +90,7 @@ public class DefaultStrategies {
 
         AnnotationSet annotationSet = AnnotationSet.of(interceptMethodAnnotations);
         return new InterceptMethodScanStrategyImpl(
-                componentScanStrategy,
+                annotationReflectionStrategy,
                 injectableScanStrategy,
                 annotationSet
         );
@@ -102,16 +102,16 @@ public class DefaultStrategies {
     }
 
     public static QuickLinkStrategies strategies(ComponentScanScope scope) {
-        ComponentScanStrategy componentScanStrategy = componentScanStrategy(scope);
-        InjectableScanStrategy injectableScanStrategy = injectableScanStrategy(componentScanStrategy);
+        AnnotationReflectionStrategy annotationReflectionStrategy = componentScanStrategy(scope);
+        InjectableScanStrategy injectableScanStrategy = injectableScanStrategy(annotationReflectionStrategy);
         InterceptMethodScanStrategy interceptMethodScanStrategy = interceptMethodScanStrategy(
-                componentScanStrategy,
+                annotationReflectionStrategy,
                 injectableScanStrategy
         );
         ConstructorFinder constructorFinder = constructorFinder();
 
         return new QuickLinkStrategies(
-                componentScanStrategy,
+                annotationReflectionStrategy,
                 injectableScanStrategy,
                 interceptMethodScanStrategy,
                 constructorFinder

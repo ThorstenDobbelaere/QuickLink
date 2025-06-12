@@ -3,19 +3,19 @@ package framework.setup.strategies.implementations;
 import framework.setup.model.reflection.annotated_entities.InjectableClass;
 import framework.setup.model.reflection.annotated_entities.InjectableClassWithInterceptedMethods;
 import framework.setup.model.reflection.annotation.AnnotationSet;
-import framework.setup.strategies.contracts.ComponentScanStrategy;
-import framework.setup.strategies.contracts.InjectableScanStrategy;
+import component_scan.strategies.contracts.AnnotationReflectionStrategy;
+import component_scan.strategies.contracts.InjectableScanStrategy;
 import framework.setup.strategies.contracts.InterceptMethodScanStrategy;
 
 import java.util.Collection;
 
 public class InterceptMethodScanStrategyImpl implements InterceptMethodScanStrategy {
-    private final ComponentScanStrategy componentScanStrategy;
+    private final AnnotationReflectionStrategy annotationReflectionStrategy;
     private final InjectableScanStrategy injectableScanStrategy;
     private final AnnotationSet annotationsToScan;
 
-    public InterceptMethodScanStrategyImpl(ComponentScanStrategy componentScanStrategy, InjectableScanStrategy injectableScanStrategy, AnnotationSet annotationsToScan) {
-        this.componentScanStrategy = componentScanStrategy;
+    public InterceptMethodScanStrategyImpl(AnnotationReflectionStrategy annotationReflectionStrategy, InjectableScanStrategy injectableScanStrategy, AnnotationSet annotationsToScan) {
+        this.annotationReflectionStrategy = annotationReflectionStrategy;
         this.injectableScanStrategy = injectableScanStrategy;
         this.annotationsToScan = annotationsToScan;
     }
@@ -36,7 +36,7 @@ public class InterceptMethodScanStrategyImpl implements InterceptMethodScanStrat
 
     private <T> InjectableClassWithInterceptedMethods<T> scanInterceptedMethods(InjectableClass<T> injectableClass) {
         Class<T> type = injectableClass.classType();
-        var methods = this.componentScanStrategy.getMethodsAnnotatedWith(type, annotationsToScan);
+        var methods = this.annotationReflectionStrategy.getMethodsAnnotatedWith(type, annotationsToScan);
         return new InjectableClassWithInterceptedMethods<>(type, injectableClass.annotationType(), methods);
     }
 

@@ -1,10 +1,10 @@
-package framework.setup.strategies.implementations.component;
+package component_scan.strategies.implementations.component;
 
 import component_scan.helper.ConstructorFinder;
 import framework.configurables.conversions.impl.DefaultConfigurationMappings;
 import framework.exceptions.internal.ObjectCreationException;
 import framework.setup.model.Component;
-import framework.setup.strategies.contracts.ComponentSupplier;
+import component_scan.strategies.contracts.ComponentSupplier;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

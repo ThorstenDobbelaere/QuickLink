@@ -1,12 +1,12 @@
 package framework.context.config;
 
 import component_scan.helper.ConstructorFinder;
-import framework.setup.strategies.contracts.ComponentScanStrategy;
-import framework.setup.strategies.contracts.InjectableScanStrategy;
+import component_scan.strategies.contracts.AnnotationReflectionStrategy;
+import component_scan.strategies.contracts.InjectableScanStrategy;
 import framework.setup.strategies.contracts.InterceptMethodScanStrategy;
 
 public record QuickLinkStrategies(
-        ComponentScanStrategy componentScanStrategy,
+        AnnotationReflectionStrategy annotationReflectionStrategy,
         InjectableScanStrategy injectableScanStrategy,
         InterceptMethodScanStrategy interceptMethodScanStrategy,
         ConstructorFinder constructorFinder

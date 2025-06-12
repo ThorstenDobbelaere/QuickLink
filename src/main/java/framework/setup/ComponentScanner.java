@@ -10,13 +10,13 @@ import framework.context.config.QuickLinkStrategies;
 import framework.setup.model.Component;
 import framework.setup.model.reflection.annotated_entities.InjectableClassWithInterceptedMethods;
 import framework.setup.model.reflection.annotation.AnnotationSet;
-import framework.setup.strategies.contracts.ComponentScanStrategy;
-import framework.setup.strategies.contracts.ComponentSupplier;
+import component_scan.strategies.contracts.AnnotationReflectionStrategy;
+import component_scan.strategies.contracts.ComponentSupplier;
 import framework.setup.strategies.contracts.InterceptMethodScanStrategy;
-import framework.setup.strategies.implementations.component.AnnotatedClassComponentSupplier;
-import framework.setup.strategies.implementations.component.AnnotatedMethodComponentSupplier;
-import framework.setup.strategies.implementations.component.ClassMethodComponentSupplier;
-import framework.setup.strategies.implementations.component.CombinedAnnotationsComponentSupplier;
+import component_scan.strategies.implementations.component.AnnotatedClassComponentSupplier;
+import component_scan.strategies.implementations.component.AnnotatedMethodComponentSupplier;
+import component_scan.strategies.implementations.component.ClassMethodComponentSupplier;
+import component_scan.strategies.implementations.component.CombinedAnnotationsComponentSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,7 @@ public class ComponentScanner {
     public static void scanComponentsAndInterceptables(QuickLinkContext context) {
         LogFormatter logFormatter = context.getLogFormatter();
         QuickLinkStrategies strategies = context.getStrategies();
-        ComponentScanStrategy componentScanStrategy = strategies.componentScanStrategy();
+        AnnotationReflectionStrategy annotationReflectionStrategy = strategies.annotationReflectionStrategy();
         InterceptMethodScanStrategy interceptMethodScanStrategy = strategies.interceptMethodScanStrategy();
 
         var injectableScanStrategy = strategies.injectableScanStrategy();
@@ -44,7 +44,7 @@ public class ComponentScanner {
         ComponentSupplier beans = new AnnotatedMethodComponentSupplier(
                 AnnotationSet.of(Config.class),
                 AnnotationSet.of(Bean.class),
-                componentScanStrategy,
+                annotationReflectionStrategy,
                 constructorFinder
         );
 
