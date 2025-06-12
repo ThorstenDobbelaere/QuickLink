@@ -1,4 +1,4 @@
-package component_scan.helper;
+package helper;
 
 import component_scan.exceptions.AccessException;
 
@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 public class AccessibilityHelper {
     private AccessibilityHelper() {}
 
-    public static Method trySetMethodAccessible(Method method) {
+    public static Method setMethodAccessible(Method method) {
         try {
             method.setAccessible(true);
             return method;
@@ -17,7 +17,7 @@ public class AccessibilityHelper {
         }
     }
 
-    public static <T> Constructor<T> trySetConstructorAccessible(Constructor<T> constructor) {
+    public static <T> Constructor<T> setConstructorAccessible(Constructor<T> constructor) {
         try {
             constructor.setAccessible(true);
             return constructor;

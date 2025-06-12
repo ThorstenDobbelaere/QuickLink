@@ -1,7 +1,7 @@
 package component_scan.strategies.implementations.component;
 
-import component_scan.helper.AccessibilityHelper;
-import component_scan.helper.ConstructorFinder;
+import helper.AccessibilityHelper;
+import helper.ConstructorFinder;
 import framework.setup.model.Component;
 import framework.setup.model.reflection.annotated_entities.InjectableClass;
 import component_scan.strategies.contracts.ComponentSupplier;
@@ -29,7 +29,7 @@ public class AnnotatedClassComponentSupplier implements ComponentSupplier {
         return injectableClasses
                 .stream()
                 .map(constructorFinder::findPrimaryConstructor)
-                .map(AccessibilityHelper::trySetConstructorAccessible)
+                .map(AccessibilityHelper::setConstructorAccessible)
                 .map(Component::fromConstructor)
                 .toList();
     }

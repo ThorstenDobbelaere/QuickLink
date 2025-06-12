@@ -1,7 +1,7 @@
 package component_scan.strategies.implementations.component;
 
-import component_scan.helper.AccessibilityHelper;
-import component_scan.helper.ConstructorFinder;
+import helper.AccessibilityHelper;
+import helper.ConstructorFinder;
 import framework.exceptions.internal.MapMethodObjectInternalError;
 import framework.setup.model.Component;
 import framework.setup.model.reflection.annotated_entities.AnnotatedMethod;
@@ -57,7 +57,7 @@ public class AnnotatedMethodComponentSupplier implements ComponentSupplier {
 
         return classesToMap.stream()
                 .map(constructorFinder::findDefaultConstructor)
-                .map(AccessibilityHelper::trySetConstructorAccessible)
+                .map(AccessibilityHelper::setConstructorAccessible)
                 .map(Component::fromConstructor)
                 .map(instantiateWithDefaultConstructor)
                 .collect(Collectors.toUnmodifiableMap(Component::getType, Component::getInstance));
@@ -76,7 +76,7 @@ public class AnnotatedMethodComponentSupplier implements ComponentSupplier {
         return annotationReflectionStrategy.getMethodsAnnotatedWith(config, methodAnnotations)
                 .stream()
                 .map(AnnotatedMethod::method)
-                .map(AccessibilityHelper::trySetMethodAccessible)
+                .map(AccessibilityHelper::setMethodAccessible)
                 .toList();
     }
 

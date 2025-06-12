@@ -2,7 +2,7 @@ package framework.setup.helper;
 
 import component_scan.annotations.interception.Timed;
 import component_scan.exceptions.AccessException;
-import component_scan.helper.AccessibilityHelper;
+import helper.AccessibilityHelper;
 import framework.exceptions.internal.InternalException;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
@@ -51,7 +51,7 @@ public class InterceptionHelper {
 
         @Override
         public Object invoke(Object o, Method method, Method method1, Object[] objects) throws Throwable {
-            AccessibilityHelper.trySetMethodAccessible(method);
+            AccessibilityHelper.setMethodAccessible(method);
 
             Instant start = Instant.now();
             Object result = method.invoke(original, objects);

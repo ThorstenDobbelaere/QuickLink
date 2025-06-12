@@ -1,6 +1,6 @@
 package component_scan.strategies.implementations.component;
 
-import component_scan.helper.ConstructorFinder;
+import helper.ConstructorFinder;
 import framework.configurables.conversions.impl.DefaultConfigurationMappings;
 import framework.exceptions.internal.ObjectCreationException;
 import framework.setup.model.Component;

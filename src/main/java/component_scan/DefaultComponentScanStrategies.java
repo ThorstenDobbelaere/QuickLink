@@ -7,7 +7,7 @@ import component_scan.annotations.injection.config.Config;
 import component_scan.annotations.injection.semantic.Controller;
 import component_scan.annotations.injection.semantic.Repository;
 import component_scan.annotations.injection.semantic.Service;
-import component_scan.helper.ConstructorFinder;
+import helper.ConstructorFinder;
 import component_scan.strategies.contracts.AnnotationReflectionStrategy;
 import component_scan.strategies.contracts.ComponentSupplier;
 import component_scan.strategies.contracts.InjectableScanStrategy;

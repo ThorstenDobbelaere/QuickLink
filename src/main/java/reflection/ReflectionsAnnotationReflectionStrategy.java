@@ -1,6 +1,6 @@
 package reflection;
 
-import component_scan.helper.AccessibilityHelper;
+import helper.AccessibilityHelper;
 import framework.setup.model.reflection.annotated_entities.AnnotatedMethod;
 import framework.setup.model.reflection.annotated_entities.InjectableClass;
 import framework.setup.model.reflection.annotation.AnnotationSet;
@@ -33,7 +33,7 @@ public class ReflectionsAnnotationReflectionStrategy implements AnnotationReflec
     private Collection<AnnotatedMethod> getMethodsAnnotatedWith(Class<?> type, AnnotationType annotationType) {
         return Arrays.stream(type.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(annotationType.annotation()))
-                .map(AccessibilityHelper::trySetMethodAccessible)
+                .map(AccessibilityHelper::setMethodAccessible)
                 .map(m -> new AnnotatedMethod(m, annotationType))
                 .toList();
     }

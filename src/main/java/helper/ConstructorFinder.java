@@ -1,4 +1,4 @@
-package component_scan.helper;
+package helper;
 
 import component_scan.exceptions.ConstructorScanException;
 import framework.setup.model.reflection.annotated_entities.InjectableClass;
