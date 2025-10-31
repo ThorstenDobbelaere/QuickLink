@@ -1,10 +1,10 @@
 package tests;
 
+import framework.CallResolver;
 import framework.QuickLink;
 import framework.context.QuickLinkContext;
 import framework.request.response.HttpResponse;
 import framework.request.response.HttpStatus;
-import framework.setup.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import testprojects.testproject.DummyProjectMain;
@@ -28,7 +28,7 @@ public class CallResolverTest {
         setup();
 
         // When i look for a non-existent call
-        HttpResponse response = CallResolver.handleCall("nonexistent");
+        HttpResponse response = CallResolver.handleCallStatic("nonexistent");
 
         // Then it returns bad request
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatus());
@@ -40,7 +40,7 @@ public class CallResolverTest {
         setup();
 
         // When i look for a method in the controller
-        HttpResponse response = CallResolver.handleCall("/dummy/pet");
+        HttpResponse response = CallResolver.handleCallStatic("/dummy/pet");
 
         // Then it returns the expected response
         Assertions.assertEquals(HttpStatus.OK, response.getStatus());

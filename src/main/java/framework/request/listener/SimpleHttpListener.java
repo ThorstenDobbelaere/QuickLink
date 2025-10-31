@@ -5,7 +5,7 @@ import framework.context.config.ListenerConfiguration;
 import framework.context.config.LogFormatter;
 import framework.request.response.HttpResponse;
 import framework.request.response.HttpStatus;
-import framework.setup.CallResolver;
+import framework.CallResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +90,7 @@ public class SimpleHttpListener implements InputListener{
         }
 
         String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
-        HttpResponse response = CallResolver.handleCall(decodedUrl);
+        HttpResponse response = CallResolver.handleCallStatic(decodedUrl);
         sendResponse(response, socket);
     }
 

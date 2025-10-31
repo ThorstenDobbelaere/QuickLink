@@ -1,9 +1,9 @@
 package tests;
 
 import demo.DemoProject;
+import framework.CallResolver;
 import framework.QuickLink;
 import framework.context.QuickLinkContext;
-import framework.setup.*;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public class PerformanceTest {
 
         Instant start = Instant.now();
         for(int i = 0; i < callCount; i++){
-            CallResolver.handleCall("/resources/1");
+            CallResolver.handleCallStatic("/resources/1");
         }
         Instant end = Instant.now();
         LOGGER.info("Regular method took {} ms for {} calls", end.toEpochMilli() - start.toEpochMilli(), callCount);
@@ -52,7 +52,7 @@ public class PerformanceTest {
 
         Instant start = Instant.now();
         for(int i = 0; i < callCount; i++){
-            CallResolver.handleCall("/warehouses/Mark/iron_ore");
+            CallResolver.handleCallStatic("/warehouses/Mark/iron_ore");
         }
         Instant end = Instant.now();
         LOGGER.info("Timed method took {} ms for {} calls", end.toEpochMilli() - start.toEpochMilli(), callCount);

@@ -2,12 +2,12 @@ package demotests;
 
 import demo.DemoProject;
 import demo.config.OutputConverterConfig;
+import framework.CallResolver;
 import framework.QuickLink;
 import framework.context.QuickLinkContext;
 import framework.context.RunMode;
 import framework.request.response.ContentType;
 import framework.request.response.HttpResponse;
-import framework.setup.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +35,7 @@ public class WarehouseTests {
         setup(RunMode.CONSOLE);
 
         // When i execute a call
-        HttpResponse response = CallResolver.handleCall("/warehouses/Mark/iron_ore");
+        HttpResponse response = CallResolver.handleCallStatic("/warehouses/Mark/iron_ore");
 
         // Then the response is yellow
         Assertions.assertTrue(response.getBody().startsWith("\u001B[33m"));
@@ -47,7 +47,7 @@ public class WarehouseTests {
         setup(RunMode.HTTP);
 
         // When i execute a call
-        HttpResponse response = CallResolver.handleCall("/warehouses/Mark/iron_ore");
+        HttpResponse response = CallResolver.handleCallStatic("/warehouses/Mark/iron_ore");
 
         // Then the response is not yellow
         Assertions.assertFalse(response.getBody().startsWith("\u001B[33m"));
@@ -59,7 +59,7 @@ public class WarehouseTests {
         setup(RunMode.HTTP);
 
         // When i execute a call that returns JSON
-        HttpResponse response = CallResolver.handleCall("/warehouses/as-json/Mark/iron_ore");
+        HttpResponse response = CallResolver.handleCallStatic("/warehouses/as-json/Mark/iron_ore");
 
         // Then i get a json response
         Assertions.assertTrue(response.getBody().startsWith("{"));
@@ -72,7 +72,7 @@ public class WarehouseTests {
         setup(RunMode.HTTP);
 
         // When i execute a call that returns HTML
-        HttpResponse response = CallResolver.handleCall("/warehouses/as-html/Mark/iron_ore");
+        HttpResponse response = CallResolver.handleCallStatic("/warehouses/as-html/Mark/iron_ore");
 
         // Then i get a html response
         Assertions.assertTrue(response.getBody().startsWith("<html>"));

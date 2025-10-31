@@ -1,4 +1,4 @@
-package framework.setup;
+package framework;
 
 import framework.configurables.conversions.impl.OutputConverterDefaultImpl;
 import framework.context.QuickLinkContext;
@@ -14,21 +14,35 @@ import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class CallResolver {
-    private static NavigableMap<String, MappedRequestHandler> requestHandlerMap;
+    private final NavigableMap<String, MappedRequestHandler> requestHandlerMap;
     private static final Logger LOGGER = LoggerFactory.getLogger(CallResolver.class);
+    private static CallResolver callResolver;
 
-    public static void setup(QuickLinkContext context) {
-        requestHandlerMap = new TreeMap<>();
-        for (MappedRequestHandler handler : context.getCache().getRequestHandlerList()) {
-            requestHandlerMap.put(handler.getMapping(), handler);
-        }
+    public CallResolver(List<MappedRequestHandler> requestHandlers) {
+        this.requestHandlerMap = requestHandlers
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    MappedRequestHandler::getMapping,
+                    mappedRequestHandler -> mappedRequestHandler,
+                    (existing, override) -> override,
+                    TreeMap::new
+                )
+            );
     }
 
-    private static String checkMapping(String url) {
+    @Deprecated
+    public static void setup(QuickLinkContext context) {
+        callResolver = new CallResolver(context.getCache().getRequestHandlerList());
+    }
+
+    private String checkMapping(String url) {
         String mapping = requestHandlerMap.floorKey(url);
 
         if (!doesUrlMatchMapping(url, mapping)) {
@@ -61,7 +75,7 @@ public class CallResolver {
         }
     }
 
-    private static HttpResponse handleMappedRequest(String url, String mapping) {
+    private HttpResponse handleMappedRequest(String url, String mapping) {
         try{
             MappedRequestHandler mappedRequestHandler = requestHandlerMap.get(mapping);
             String args = url.substring(mapping.length());
@@ -73,7 +87,7 @@ public class CallResolver {
         }
     }
 
-    private static HttpResponse tryHandleCall(String url) throws HttpException {
+    private HttpResponse tryHandleCall(String url) throws HttpException {
         if (requestHandlerMap == null){
             throw new HttpException(new NullPointerException("Handlers not initialized."));
         }
@@ -90,13 +104,18 @@ public class CallResolver {
         }
     }
 
-    public static HttpResponse handleCall(String url) {
+    public HttpResponse handleCall(String url) {
         try{
             return tryHandleCall(url);
         } catch (HttpException e) {
             LOGGER.error("HTTP Error occurred: {}. Returning status code {}", e.getMessage(), e.getStatus());
-            ResponseEntity entity = new ResponseEntity(String.format("An error occurred while handling your request:\n%s", e.getMessage()), e.getStatus());
+            ResponseEntity entity = new ResponseEntity(String.format("An error occurred while handling your request:%n%s", e.getMessage()), e.getStatus());
             return new HttpResponse(entity, new OutputConverterDefaultImpl());
         }
+    }
+
+    @Deprecated
+    public static HttpResponse handleCallStatic(String url) {
+        return callResolver.handleCall(url);
     }
 }
