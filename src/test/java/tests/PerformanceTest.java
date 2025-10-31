@@ -1,6 +1,7 @@
 package tests;
 
 import demo.DemoProject;
+import framework.QuickLink;
 import framework.context.QuickLinkContext;
 import framework.setup.*;
 import org.junit.jupiter.api.Test;
@@ -14,12 +15,13 @@ public class PerformanceTest {
 
     private void setup(){
         QuickLinkContext context = new QuickLinkContext(DemoProject.class);
-        ComponentScanner.scanComponentsAndInterceptables(context);
-        GraphChecker.checkCycles(context);
-        InjectableFactory.instantiateSingletons(context);
-        ControllerMapper.mapControllersToUrls(context);
-        ControllerMethodMapper.mapHandlersForRequests(context);
-        CallResolver.setup(context);
+        new QuickLink(context)
+            .scanComponents()
+            .checkCycles()
+            .instantiateSingletons()
+            .mapControllers()
+            .mapControllerMethods()
+            .setupCallResolver();
     }
 
     @Test

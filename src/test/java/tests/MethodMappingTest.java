@@ -1,5 +1,6 @@
 package tests;
 
+import framework.QuickLink;
 import testprojects.ambiguityproject.AmbiguityProjectMain;
 import testprojects.emptymappingproject.EmptyMappingProjectMain;
 import framework.context.QuickLinkContext;
@@ -13,11 +14,12 @@ import testprojects.testproject.DummyProjectMain;
 public class MethodMappingTest {
     private void setup(Class<?> baseClass){
         QuickLinkContext context = new QuickLinkContext(baseClass);
-        ComponentScanner.scanComponentsAndInterceptables(context);
-        GraphChecker.checkCycles(context);
-        InjectableFactory.instantiateSingletons(context);
-        ControllerMapper.mapControllersToUrls(context);
-        ControllerMethodMapper.mapHandlersForRequests(context);
+        new QuickLink(context)
+            .scanComponents()
+            .checkCycles()
+            .instantiateSingletons()
+            .mapControllers()
+            .mapControllerMethods();
     }
 
     @Test

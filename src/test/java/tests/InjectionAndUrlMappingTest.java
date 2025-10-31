@@ -23,7 +23,7 @@ import java.util.Set;
 
 public class InjectionAndUrlMappingTest {
 
-    private QuickLinkContext setupContext() throws NoSuchMethodException {
+    private QuickLinkContext setup() throws NoSuchMethodException {
         QuickLinkContext context = new QuickLinkContext(DummyProjectMain.class);
 
         Set<Component> components = new HashSet<>();
@@ -46,7 +46,7 @@ public class InjectionAndUrlMappingTest {
     @Test
     public void testBeanAndComponentMapping() throws NoSuchMethodException {
         // Given a context for the test project
-        var context = setupContext();
+        var context = setup();
 
         // When i instantiate the classes and map the controllers
         InjectableFactory.instantiateSingletons(context);

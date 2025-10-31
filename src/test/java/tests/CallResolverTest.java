@@ -1,5 +1,6 @@
 package tests;
 
+import framework.QuickLink;
 import framework.context.QuickLinkContext;
 import framework.request.response.HttpResponse;
 import framework.request.response.HttpStatus;
@@ -12,12 +13,13 @@ public class CallResolverTest {
 
     private void setup(){
         QuickLinkContext context = new QuickLinkContext(DummyProjectMain.class);
-        ComponentScanner.scanComponentsAndInterceptables(context);
-        InjectableFactory.instantiateSingletons(context);
-        GraphChecker.checkCycles(context);
-        ControllerMapper.mapControllersToUrls(context);
-        ControllerMethodMapper.mapHandlersForRequests(context);
-        CallResolver.setup(context);
+        new QuickLink(context)
+            .scanComponents()
+            .checkCycles()
+            .instantiateSingletons()
+            .mapControllers()
+            .mapControllerMethods()
+            .setupCallResolver();
     }
 
     @Test

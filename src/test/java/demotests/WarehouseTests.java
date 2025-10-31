@@ -2,6 +2,7 @@ package demotests;
 
 import demo.DemoProject;
 import demo.config.OutputConverterConfig;
+import framework.QuickLink;
 import framework.context.QuickLinkContext;
 import framework.context.RunMode;
 import framework.request.response.ContentType;
@@ -19,12 +20,13 @@ public class WarehouseTests {
         }
 
         QuickLinkContext context = new QuickLinkContext(DemoProject.class);
-        ComponentScanner.scanComponentsAndInterceptables(context);
-        GraphChecker.checkCycles(context);
-        InjectableFactory.instantiateSingletons(context);
-        ControllerMapper.mapControllersToUrls(context);
-        ControllerMethodMapper.mapHandlersForRequests(context);
-        CallResolver.setup(context);
+        new QuickLink(context)
+            .scanComponents()
+            .checkCycles()
+            .instantiateSingletons()
+            .mapControllers()
+            .mapControllerMethods()
+            .setupCallResolver();
     }
 
     @Test

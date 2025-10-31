@@ -1,6 +1,7 @@
 package demotests;
 
 import demo.DemoProject;
+import framework.QuickLink;
 import framework.context.QuickLinkContext;
 import framework.request.response.ContentType;
 import framework.request.response.HttpResponse;
@@ -15,12 +16,13 @@ public class ResourceTests {
     public void setup(){
         // Given the demo project is set up
         QuickLinkContext context = new QuickLinkContext(DemoProject.class);
-        ComponentScanner.scanComponentsAndInterceptables(context);
-        GraphChecker.checkCycles(context);
-        InjectableFactory.instantiateSingletons(context);
-        ControllerMapper.mapControllersToUrls(context);
-        ControllerMethodMapper.mapHandlersForRequests(context);
-        CallResolver.setup(context);
+        new QuickLink(context)
+            .scanComponents()
+            .checkCycles()
+            .instantiateSingletons()
+            .mapControllers()
+            .mapControllerMethods()
+            .setupCallResolver();
     }
 
     @Test
