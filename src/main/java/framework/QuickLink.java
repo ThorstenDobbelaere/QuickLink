@@ -34,24 +34,51 @@ public class QuickLink {
 
     private void setup() {
         printTimeStamp(context, "context setup");
+        this.scanComponents()
+            .checkCycles()
+            .instantiateSingletons()
+            .mapControllers()
+            .mapControllerMethods()
+            .setupCallResolver()
+            .startListening();
+    }
 
+    public QuickLink scanComponents() {
         ComponentScanner.scanComponentsAndInterceptables(context);
         printTimeStamp(context, "component and intercept method scanning");
+        return this;
+    }
 
+    public QuickLink checkCycles() {
         GraphChecker.checkCycles(context);
         printTimeStamp(context, "cycle checking");
+        return this;
+    }
 
+    public QuickLink instantiateSingletons() {
         InjectableFactory.instantiateSingletons(context);
         printTimeStamp(context, "injectable singleton instantiation");
+        return this;
+    }
 
+    public QuickLink mapControllers() {
         ControllerMapper.mapControllersToUrls(context);
         printTimeStamp(context, "controller url mapping");
+        return this;
+    }
 
+    public QuickLink mapControllerMethods() {
         ControllerMethodMapper.mapHandlersForRequests(context);
         printTimeStamp(context, "request handler url mapping");
+        return this;
+    }
 
+    public QuickLink setupCallResolver() {
         CallResolver.setup(context);
+        return this;
+    }
 
+    public void startListening() {
         InputListener listener = InputListenerFactory.createInputListener(context);
         printTimeStamp(context, "listener setup");
         try{
@@ -59,6 +86,5 @@ public class QuickLink {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 }
