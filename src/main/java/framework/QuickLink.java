@@ -12,6 +12,11 @@ import java.io.IOException;
 
 public class QuickLink {
     private static final Logger LOGGER = LoggerFactory.getLogger(QuickLink.class.getName());
+    private final QuickLinkContext context;
+
+    public QuickLink(QuickLinkContext context) {
+        this.context = context;
+    }
 
     private static void printTimeStamp(QuickLinkContext context, String description) {
         LOGGER.info("Finished {} in {} ms", description, context.getChrono());
@@ -19,15 +24,15 @@ public class QuickLink {
 
     public static void run(Class<?> root){
         QuickLinkContext context = new QuickLinkContext(root);
-        setup(context);
+        new QuickLink(context).setup();
     }
 
     public static void run(Class<?> root, QuickLinkContextConfiguration configuration){
         QuickLinkContext context = new QuickLinkContext(root, configuration);
-        setup(context);
+        new QuickLink(context).setup();
     }
 
-    private static void setup(QuickLinkContext context) {
+    private void setup() {
         printTimeStamp(context, "context setup");
 
         ComponentScanner.scanComponentsAndInterceptables(context);
@@ -56,6 +61,4 @@ public class QuickLink {
         }
 
     }
-
-    private QuickLink(){}
 }
